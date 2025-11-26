@@ -1,6 +1,14 @@
-require "rapid_plugin/version"
-require "rapid_plugin/railtie"
+require "zeitwerk"
 
 module RapidPlugin
-  # Your code goes here...
+  def self.loader
+    @loader ||= Zeitwerk::Loader.for_gem.tap do |loader|
+      loader.ignore("#{__dir__}/rapid_plugin/railtie.rb")
+      loader.setup
+    end
+  end
+
+  loader
 end
+
+require "rapid_plugin/railtie"
