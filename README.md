@@ -30,8 +30,8 @@ RapidPlugin.register! MyGem::Plugin
 # lib/my_gem/plugin.rb
 class MyGem::Plugin < RapidPlugin::Base
   def connect(app)
-    app.search_service.use MyGem::Plugin::Search
-    app.layout_service.use MyGem::Plugin::LayoutBuilder
+    app.search_middleware.use MyGem::Plugin::Search
+    app.layout_middleware.use MyGem::Plugin::LayoutBuilder
   end
 
   def mount(routes)
@@ -59,12 +59,14 @@ end
 
 ## Multiple Applications
 
-The default application uses registered plugins. In order to use only a subset of the registered plugins or split the plugins into separate mountable engines for different sets of users, you can explicitly define the applications. 
+The default application uses registered plugins. In order to use only a subset of the registered plugins or split the plugins into separate mountable engines for different sets of users, you can explicitly define the applications.
 
 ```ruby
 # config/initializers/rapidlybuilt.rb
-RapidPlugin.applications.build :admin, plugins: [MyAdmin::Plugin, AnotherAdmin::Plugin]
-RapidPlugin.applications.build :root, plugins: [MyRoot::Plugin, AnotherRoot::Plugin]
+RapidPlugin.config do |config|
+  config.build_application :admin, plugins: [MyAdmin::Plugin, AnotherAdmin::Plugin]
+  config.build_application :root, plugins: [MyRoot::Plugin, AnotherRoot::Plugin]
+end
 ```
 
 ```ruby
