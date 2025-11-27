@@ -43,10 +43,10 @@ module RapidPlugin
     # @param name [Symbol, String, nil] The application name, or nil for default
     # @return [Application, nil] The application instance, or nil if not found
     def application(name = nil)
-      if name.nil?
+      if name.nil? || name == :default
         default_application
       else
-        @applications[name.to_sym]
+        @applications[name.to_sym] || raise(ApplicationNotFoundError, "Application #{name.inspect} not found")
       end
     end
 
@@ -62,10 +62,10 @@ module RapidPlugin
     # @param name [Symbol, String, nil] The application name, or nil for default
     # @return [Class] The engine class for the application
     def engine(name = nil)
-      if name.nil?
+      if name.nil? || name == :default
         Rails::Engine
       else
-        @engines[name.to_sym] || raise(ArgumentError, "Application #{name.inspect} not found")
+        @engines[name.to_sym] || raise(ApplicationNotFoundError, "Application #{name.inspect} for engine not found")
       end
     end
   end

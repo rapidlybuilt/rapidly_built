@@ -186,6 +186,13 @@ module RapidPlugin
       end
     end
 
+    # Get a copy of the middleware entries
+    #
+    # @return [Array<Entry>] A copy of the middleware entries
+    def entries
+      @entries.dup
+    end
+
     private
 
     # Find the index of a middleware in the stack

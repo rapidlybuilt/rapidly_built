@@ -75,6 +75,13 @@ module RapidPlugin
       assert_equal default, app
     end
 
+    test "#application returns the default application when name is :default" do
+      default = @config.default_application
+      app = @config.application(:default)
+
+      assert_equal default, app
+    end
+
     test "#application returns the default application when no name is provided" do
       default = @config.default_application
       app = @config.application
@@ -94,8 +101,10 @@ module RapidPlugin
       assert_equal admin_app, @config.application("admin")
     end
 
-    test "#application returns nil for non-existent application" do
-      assert_nil @config.application(:nonexistent)
+    test "#application raises ApplicationNotFoundError for non-existent application" do
+      assert_raises ApplicationNotFoundError do
+        @config.application(:nonexistent)
+      end
     end
 
     test "#applications returns a hash of all applications" do
@@ -119,6 +128,12 @@ module RapidPlugin
 
     test "#engine returns Rails::Engine when name is nil" do
       engine = @config.engine(nil)
+
+      assert_equal Rails::Engine, engine
+    end
+
+    test "#engine returns Rails::Engine when name is :default" do
+      engine = @config.engine(:default)
 
       assert_equal Rails::Engine, engine
     end
@@ -149,8 +164,8 @@ module RapidPlugin
       assert_equal app, engine_instance.plugin_application
     end
 
-    test "#engine raises ArgumentError for non-existent application" do
-      assert_raises ArgumentError, "Application :nonexistent not found" do
+    test "#engine raises ApplicationNotFoundError for non-existent application" do
+      assert_raises ApplicationNotFoundError, "Application :nonexistent for engine not found" do
         @config.engine(:nonexistent)
       end
     end

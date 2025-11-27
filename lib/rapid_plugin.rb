@@ -1,6 +1,9 @@
 require "zeitwerk"
 
 module RapidPlugin
+  class Error < StandardError; end
+  class ApplicationNotFoundError < Error; end
+
   def self.loader
     @loader ||= Zeitwerk::Loader.for_gem.tap do |loader|
       loader.ignore("#{__dir__}/rapid_plugin/railtie.rb")

@@ -70,7 +70,7 @@ module RapidPlugin
       end
 
       @stack.use middleware_class, :arg1, :arg2
-      entry = @stack.instance_variable_get(:@entries).first
+      entry = @stack.entries.first
       middleware = entry.instance
 
       assert_equal :arg1, middleware.arg1
@@ -93,7 +93,7 @@ module RapidPlugin
       end
 
       @stack.use(middleware_class) { block_called = true }
-      entry = @stack.instance_variable_get(:@entries).first
+      entry = @stack.entries.first
       middleware = entry.instance
 
       assert_not_nil middleware.block
