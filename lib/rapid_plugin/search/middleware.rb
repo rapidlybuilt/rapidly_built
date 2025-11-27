@@ -45,4 +45,3 @@ module RapidPlugin
     end
   end
 end
-

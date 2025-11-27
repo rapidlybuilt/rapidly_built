@@ -10,7 +10,7 @@ module RapidPlugin
       end
 
       def call(args)
-        args + [:a]
+        args + [ :a ]
       end
     end
 
@@ -21,7 +21,7 @@ module RapidPlugin
       end
 
       def call(args)
-        args + [:b]
+        args + [ :b ]
       end
     end
 
@@ -32,7 +32,7 @@ module RapidPlugin
       end
 
       def call(args)
-        args + [:c]
+        args + [ :c ]
       end
     end
 
@@ -46,7 +46,7 @@ module RapidPlugin
 
       assert_equal 2, @stack.size
       result = @stack.call([])
-      assert_equal [:a, :b], result
+      assert_equal [ :a, :b ], result
     end
 
     test "#use returns self for chaining" do
@@ -107,7 +107,7 @@ module RapidPlugin
       @stack.insert 1, TestMiddlewareB
 
       result = @stack.call([])
-      assert_equal [:a, :b, :c], result
+      assert_equal [ :a, :b, :c ], result
     end
 
     test "#insert_before inserts middleware before target" do
@@ -116,7 +116,7 @@ module RapidPlugin
       @stack.insert_before TestMiddlewareC, TestMiddlewareB
 
       result = @stack.call([])
-      assert_equal [:a, :b, :c], result
+      assert_equal [ :a, :b, :c ], result
     end
 
     test "#insert_before raises error if target not found" do
@@ -133,7 +133,7 @@ module RapidPlugin
       @stack.insert_after TestMiddlewareA, TestMiddlewareB
 
       result = @stack.call([])
-      assert_equal [:a, :b, :c], result
+      assert_equal [ :a, :b, :c ], result
     end
 
     test "#insert_after raises error if target not found" do
@@ -150,7 +150,7 @@ module RapidPlugin
       @stack.swap TestMiddlewareB, TestMiddlewareC
 
       result = @stack.call([])
-      assert_equal [:a, :c], result
+      assert_equal [ :a, :c ], result
     end
 
     test "#swap raises error if target not found" do
@@ -168,7 +168,7 @@ module RapidPlugin
 
       assert_equal 1, @stack.size
       result = @stack.call([])
-      assert_equal [:b], result
+      assert_equal [ :b ], result
     end
 
     test "#delete does not raise if middleware not found" do
@@ -196,7 +196,7 @@ module RapidPlugin
       @stack.unshift TestMiddlewareC
 
       result = @stack.call([])
-      assert_equal [:c, :a, :b], result
+      assert_equal [ :c, :a, :b ], result
     end
 
     test "#size returns number of middleware" do
@@ -214,7 +214,7 @@ module RapidPlugin
       entries = []
       @stack.each { |entry| entries << entry.klass }
 
-      assert_equal [TestMiddlewareA, TestMiddlewareB], entries
+      assert_equal [ TestMiddlewareA, TestMiddlewareB ], entries
     end
 
     test "#each returns self" do
@@ -230,7 +230,7 @@ module RapidPlugin
       @stack.move TestMiddlewareC, 0
 
       result = @stack.call([])
-      assert_equal [:c, :a, :b], result
+      assert_equal [ :c, :a, :b ], result
     end
 
     test "#move raises error if target not found" do
@@ -248,7 +248,7 @@ module RapidPlugin
       @stack.move_after TestMiddlewareC, TestMiddlewareA
 
       result = @stack.call([])
-      assert_equal [:a, :c, :b], result
+      assert_equal [ :a, :c, :b ], result
     end
 
     test "#move_after raises error if target not found" do
@@ -266,7 +266,7 @@ module RapidPlugin
       @stack.move_before TestMiddlewareC, TestMiddlewareA
 
       result = @stack.call([])
-      assert_equal [:c, :a, :b], result
+      assert_equal [ :c, :a, :b ], result
     end
 
     test "#move_before raises error if target not found" do
@@ -283,21 +283,21 @@ module RapidPlugin
       @stack.use TestMiddlewareC
 
       result = @stack.call([])
-      assert_equal [:a, :b, :c], result
+      assert_equal [ :a, :b, :c ], result
     end
 
     test "#call passes args through chain" do
       middleware_class = Class.new do
         def call(args)
-          args + [1]
+          args + [ 1 ]
         end
       end
 
       @stack.use middleware_class
       @stack.use middleware_class
 
-      result = @stack.call([:initial])
-      assert_equal [:initial, 1, 1], result
+      result = @stack.call([ :initial ])
+      assert_equal [ :initial, 1, 1 ], result
     end
 
     test "find_index works with class" do
@@ -332,4 +332,3 @@ module RapidPlugin
     end
   end
 end
-

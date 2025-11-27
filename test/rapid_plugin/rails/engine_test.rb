@@ -38,7 +38,7 @@ module RapidPlugin
 
       test "default engine mounts all plugins" do
         engine_instance = Engine.instance
-        engine_instance.routes.draw {}
+        engine_instance.routes.draw { }
 
         assert @app.mounted?
         assert_not_nil @plugin1.mounted_routes
@@ -57,7 +57,7 @@ module RapidPlugin
 
         engine_instance = engine.instance
         # Draw routes to trigger the routes block
-        engine_instance.routes.draw {}
+        engine_instance.routes.draw { }
 
         assert app.mounted?
         assert_not_nil plugin1.mounted_routes
@@ -93,4 +93,3 @@ module RapidPlugin
     end
   end
 end
-

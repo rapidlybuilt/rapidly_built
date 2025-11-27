@@ -64,7 +64,7 @@ module RapidPlugin
       @app.add_plugin(plugin2)
 
       assert_equal 2, @app.plugins.size
-      assert_equal [plugin1, plugin2], @app.plugins
+      assert_equal [ plugin1, plugin2 ], @app.plugins
     end
 
     test "raises error if adding plugin to mounted application" do
@@ -76,4 +76,3 @@ module RapidPlugin
     end
   end
 end
-

@@ -29,7 +29,7 @@ module RapidPlugin
     end
 
     test "#build_application adds plugins to the application" do
-      app = @config.build_application(:admin, plugins: [TestPlugin, TestPlugin])
+      app = @config.build_application(:admin, plugins: [ TestPlugin, TestPlugin ])
 
       assert_equal 2, app.plugins.size
       assert_instance_of TestPlugin, app.plugins.first
@@ -171,4 +171,3 @@ module RapidPlugin
     end
   end
 end
-

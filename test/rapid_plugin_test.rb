@@ -16,6 +16,6 @@ class RapidPluginTest < ActiveSupport::TestCase
   test "register! adds plugin to default application" do
     plugin = TestPlugin.new
     RapidPlugin.register!(plugin)
-    assert_equal [plugin], RapidPlugin.config.default_application.plugins
+    assert_equal [ plugin ], RapidPlugin.config.default_application.plugins
   end
 end
