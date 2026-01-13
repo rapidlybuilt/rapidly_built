@@ -46,7 +46,7 @@ module RapidlyBuilt
       end
 
       test "#build_engine_for mounts all tools" do
-        toolkit = Toolkit.new
+        toolkit = Toolkit::Base.new
         tool1 = TestTool.new
         tool2 = TestTool.new
         toolkit.add_tool(tool1)

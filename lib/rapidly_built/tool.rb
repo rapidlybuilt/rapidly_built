@@ -6,7 +6,7 @@ module RapidlyBuilt
   #   class MyGem::Tool < RapidlyBuilt::Tool
   #     def connect(app)
   #       app.search_middleware.use MyGem::Tool::Search
-  #       app.layout_middleware.use MyGem::Tool::LayoutBuilder
+  #       app.context_middleware.use MyGem::Tool::LayoutBuilder
   #     end
   #
   #     def mount(routes)

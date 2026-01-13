@@ -21,7 +21,7 @@ module RapidlyBuilt
       end
 
       # Test layout middleware
-      class TestLayoutMiddleware < Layout::Middleware
+      class TestSetupMiddleware
         attr_reader :called_with_context
 
         def initialize(**options)
@@ -46,56 +46,36 @@ module RapidlyBuilt
         @controller.instance_variable_set(:@_routes, @routes)
       end
 
-      test "#toolkit returns default toolkit when no param is set" do
-        get :index
-
-        assert_equal @toolkit, @controller.send(:toolkit)
-      end
-
-      test "#toolkit returns toolkit based on app param" do
-        get :index, params: { app_id: "admin" }
-
-        assert_equal @admin_toolkit, @controller.send(:toolkit)
-      end
-
-      test "#rapid_layout returns the layout after initialization" do
-        get :index
-
-        assert_not_nil @controller.send(:rapid_layout)
-      end
-
       test "nonexistent toolkit raises ToolkitNotFoundError" do
         assert_raises ToolkitNotFoundError do
           get :index, params: { app_id: "nonexistent" }
         end
       end
 
-      test "running layout middleware" do
-        @toolkit.layout_middleware.use(TestLayoutMiddleware)
+      test "running setup middleware" do
+        @toolkit.context_middleware.use(TestSetupMiddleware)
 
         get :index
 
         # Get the middleware instance from the stack
-        middleware_entry = @toolkit.layout_middleware.entries.first
+        middleware_entry = @toolkit.context_middleware.entries.first
         middleware = middleware_entry.instance
 
-        assert_not_nil middleware.called_with_context.layout
+        assert_not_nil middleware.called_with_context.ui.layout
         assert_equal @toolkit, middleware.called_with_context.toolkit
       end
 
       test "finalizing the layout" do
         finalized_contexts = []
-        modified_layout = Object.new
 
-        @controller.define_singleton_method :finalize_layout do |context|
+        @controller.define_singleton_method :finalize_rapidly_built do |context|
           finalized_contexts << context
-          Layout::Context.new(layout: modified_layout, toolkit: context.toolkit)
         end
 
         get :index
 
         assert_equal 1, finalized_contexts.size
-        assert_equal modified_layout, @controller.send(:rapid_layout)
+        assert_equal @toolkit, @controller.send(:rapidly_built).toolkit
       end
     end
   end

@@ -3,7 +3,7 @@ module RapidlyBuilt
     # Controller helper for integrating RapidlyBuilt with Rails controllers
     #
     # Provides access to the mounted RapidlyBuilt::Toolkit instance and
-    # sets up layout initialization via the toolkit's layout middleware.
+    # sets up the context via the toolkit's setup middleware.
     #
     # @example
     #   class ApplicationController < ActionController::Base
@@ -11,55 +11,38 @@ module RapidlyBuilt
     #   end
     module ControllerHelper
       extend ActiveSupport::Concern
-      include RapidUI::UsesLayout
 
       included do
+        extend RapidUI::UsesLayout
+        uses_application_layout
+
         before_action :setup_rapidly_built
       end
 
       private
 
-      # Get the RapidlyBuilt::Toolkit instance for the current request
-      #
-      # @return [Toolkit, nil] The toolkit instance, or nil if not found
-      def toolkit
-        @toolkit ||= find_toolkit || raise(ToolkitNotFoundError, "Toolkit not found")
-      end
-
-      # Get the current layout instance
-      #
-      # @return [Object, nil] The layout instance
-      def rapid_layout
-        # #layout conflicts with ActionController so using rapid_layout
-        @rapid_layout
-      end
-
-      # Find the RapidlyBuilt::Toolkit instance using the app parameter
-      #
-      # @return [Toolkit, nil] The toolkit instance, or nil if not found
-      def find_toolkit(name = params[:app_id])
-        RapidlyBuilt.config.toolkit(name)
-      end
+      attr_reader :rapidly_built
 
       # Initialize the layout using the toolkit's layout middleware
       def setup_rapidly_built
-        return unless toolkit
+        app_id = params[:app_id]
 
-        context = Layout::Context.new(layout:, toolkit:)
+        context = Toolkit::Context.new(
+          toolkit: RapidlyBuilt.config.find_toolkit!(app_id),
+          ui:, # from RapidUI::UsesLayout
+        )
 
-        # Run the layout middleware stack
-        context = toolkit.layout_middleware.call(context)
-        context = finalize_layout(context)
+        # API for modifying the
+        context.toolkit.context_middleware.call(context)
+        finalize_rapidly_built(context)
 
-        @rapid_layout = context.layout
+        @rapidly_built = context
       end
 
-      # Allow controllers the last chance to modify the layout
+      # Allow controllers the last chance to modify the context
       #
-      # @param context [Layout::Context] The layout context
-      # @return [Layout::Context] The modified layout context
-      def finalize_layout(context)
-        context
+      # @param context [Context] The context
+      def finalize_rapidly_built(context)
       end
     end
   end

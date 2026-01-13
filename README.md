@@ -31,7 +31,7 @@ RapidlyBuilt.register_tool! MyGem::Tool
 class MyGem::Tool < RapidlyBuilt::Tool
   def connect(toolkit)
     toolkit.search_middleware.use MyGem::Tool::Search
-    toolkit.layout_middleware.use MyGem::Tool::LayoutBuilder
+    toolkit.context_middleware.use MyGem::Tool::LayoutBuilder
   end
 
   def mount(routes)

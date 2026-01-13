@@ -17,10 +17,11 @@ module RapidlyBuilt
     # @param name [Symbol, String] The name of the toolkit
     # @param tools [Array<Class>] Array of tool classes to instantiate and add
     # @return [Toolkit] The created toolkit
-    def build_toolkit(name, tools: [])
+    def build_toolkit(name, tools: [], **options)
       name = name.to_sym
 
-      toolkit = Toolkit.new
+      klass = options[:class] || Toolkit::Base
+      toolkit = klass.new
       tools.each do |tool_class|
         toolkit.add_tool(tool_class.new)
       end
@@ -35,14 +36,14 @@ module RapidlyBuilt
     #
     # @return [Toolkit] The default toolkit instance
     def default_toolkit
-      @toolkits[:default] ||= Toolkit.new
+      @toolkits[:default] ||= Toolkit::Base.new
     end
 
     # Get a toolkit by name
     #
     # @param name [Symbol, String, nil] The toolkit name, or nil for default
     # @return [Toolkit, nil] The toolkit instance, or nil if not found
-    def toolkit(name = nil)
+    def find_toolkit!(name = nil)
       if name.nil? || name == :default
         default_toolkit
       else

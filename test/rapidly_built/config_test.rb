@@ -18,14 +18,14 @@ module RapidlyBuilt
     test "#build_toolkit creates a toolkit with the given name" do
       toolkit = @config.build_toolkit(:admin, tools: [])
 
-      assert_instance_of Toolkit, toolkit
-      assert_equal toolkit, @config.toolkit(:admin)
+      assert_instance_of Toolkit::Base, toolkit
+      assert_equal toolkit, @config.find_toolkit!(:admin)
     end
 
     test "#build_toolkit converts name to symbol" do
       toolkit = @config.build_toolkit("admin", tools: [])
 
-      assert_equal toolkit, @config.toolkit(:admin)
+      assert_equal toolkit, @config.find_toolkit!(:admin)
     end
 
     test "#build_toolkit adds tools to the toolkit" do
@@ -51,13 +51,13 @@ module RapidlyBuilt
     test "#build_toolkit returns the created toolkit" do
       toolkit = @config.build_toolkit(:admin, tools: [])
 
-      assert_instance_of Toolkit, toolkit
+      assert_instance_of Toolkit::Base, toolkit
     end
 
     test "#default_toolkit creates a new toolkit if it doesn't exist" do
       toolkit = @config.default_toolkit
 
-      assert_instance_of Toolkit, toolkit
+      assert_instance_of Toolkit::Base, toolkit
       assert_equal toolkit, @config.default_toolkit
     end
 
@@ -68,42 +68,42 @@ module RapidlyBuilt
       assert_equal toolkit1, toolkit2
     end
 
-    test "#toolkit returns the default toolkit when name is nil" do
+    test "#find_toolkit! returns the default toolkit when name is nil" do
       default = @config.default_toolkit
-      toolkit = @config.toolkit(nil)
+      toolkit = @config.find_toolkit!(nil)
 
       assert_equal default, toolkit
     end
 
-    test "#toolkit returns the default toolkit when name is :default" do
+    test "#find_toolkit! returns the default toolkit when name is :default" do
       default = @config.default_toolkit
-      toolkit = @config.toolkit(:default)
+      toolkit = @config.find_toolkit!(:default)
 
       assert_equal default, toolkit
     end
 
-    test "#toolkit returns the default toolkit when no name is provided" do
+    test "#find_toolkit! returns the default toolkit when no name is provided" do
       default = @config.default_toolkit
-      toolkit = @config.toolkit
+      toolkit = @config.find_toolkit!(nil)
 
       assert_equal default, toolkit
     end
 
-    test "#toolkit returns a toolkit by name" do
+    test "#find_toolkit! returns a toolkit by name" do
       admin_toolkit = @config.build_toolkit(:admin, tools: [])
 
-      assert_equal admin_toolkit, @config.toolkit(:admin)
+      assert_equal admin_toolkit, @config.find_toolkit!(:admin)
     end
 
-    test "#toolkit converts name to symbol" do
+    test "#find_toolkit! converts name to symbol" do
       admin_toolkit = @config.build_toolkit(:admin, tools: [])
 
-      assert_equal admin_toolkit, @config.toolkit("admin")
+      assert_equal admin_toolkit, @config.find_toolkit!("admin")
     end
 
-    test "#toolkit raises ToolkitNotFoundError for non-existent toolkit" do
+    test "#find_toolkit! raises ToolkitNotFoundError for non-existent toolkit" do
       assert_raises ToolkitNotFoundError do
-        @config.toolkit(:nonexistent)
+        @config.find_toolkit!(:nonexistent)
       end
     end
 
