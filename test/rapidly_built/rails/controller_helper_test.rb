@@ -39,7 +39,7 @@ module RapidlyBuilt
 
       setup do
         @app = RapidlyBuilt.config.default_application
-        @admin_app = RapidlyBuilt.config.build_application(:admin, plugins: [])
+        @admin_app = RapidlyBuilt.config.build_application(:admin, tools: [])
         @controller = TestController.new
         @routes = ActionDispatch::Routing::RouteSet.new
         @routes.draw do

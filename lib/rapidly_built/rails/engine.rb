@@ -1,6 +1,6 @@
 module RapidlyBuilt
   module Rails
-    # Mountable Rails engine that mounts all of a specific RapidlyBuilt::Application's plugins
+    # Mountable Rails engine that mounts all of a specific RapidlyBuilt::Application's tools
     #
     # @example
     #   # config/routes.rb
@@ -24,14 +24,14 @@ module RapidlyBuilt
       # Subclasses override this to return a specific application
       #
       # @return [Application] The application instance
-      def plugin_application
+      def tool_application
         RapidlyBuilt.config.default_application
       end
 
       class << self
         def build_engine_for(app)
           Class.new(Rails::Engine) do
-            define_method :plugin_application do
+            define_method :tool_application do
               app
             end
 
@@ -41,14 +41,14 @@ module RapidlyBuilt
           end
         end
 
-        # Mount all plugins from an application onto the routes mapper
+        # Mount all tools from an application onto the routes mapper
         #
-        # @param app [Application] The application containing plugins to mount
+        # @param app [Application] The application containing tools to mount
         # @param routes [ActionDispatch::Routing::Mapper] The routes mapper
         def draw_application_routes(app, routes)
           app.mark_as_mounted!
-          app.plugins.each do |plugin|
-            plugin.mount(routes)
+          app.tools.each do |tool|
+            tool.mount(routes)
           end
         end
       end

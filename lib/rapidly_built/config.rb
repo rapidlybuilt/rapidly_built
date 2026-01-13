@@ -3,8 +3,8 @@ module RapidlyBuilt
   #
   # @example
   #   RapidlyBuilt.config do |config|
-  #     config.build_application :admin, plugins: [MyAdmin::Plugin, AnotherAdmin::Plugin]
-  #     config.build_application :root, plugins: [MyRoot::Plugin, AnotherRoot::Plugin]
+  #     config.build_application :admin, tools: [MyAdmin::Tool, AnotherAdmin::Tool]
+  #     config.build_application :root, tools: [MyRoot::Tool, AnotherRoot::Tool]
   #   end
   class Config
     def initialize
@@ -12,17 +12,17 @@ module RapidlyBuilt
       @engines = {}
     end
 
-    # Build an application with the given name and plugins
+    # Build an application with the given name and tools
     #
     # @param name [Symbol, String] The name of the application
-    # @param plugins [Array<Class>] Array of plugin classes to instantiate and add
+    # @param tools [Array<Class>] Array of tool classes to instantiate and add
     # @return [Application] The created application
-    def build_application(name, plugins: [])
+    def build_application(name, tools: [])
       name = name.to_sym
 
       app = Application.new
-      plugins.each do |plugin_class|
-        app.add_plugin(plugin_class.new)
+      tools.each do |tool_class|
+        app.add_tool(tool_class.new)
       end
 
       @applications[name] = app

@@ -2,8 +2,8 @@ require "test_helper"
 
 module RapidlyBuilt
   class BaseTest < ActiveSupport::TestCase
-    # Test plugin class scoped to this test class
-    class TestPlugin < Base
+    # Test tool class scoped to this test class
+    class TestTool < Base
       def connect(app)
       end
 
@@ -12,29 +12,29 @@ module RapidlyBuilt
     end
 
     test "#id returns the default ID when not provided" do
-      plugin = TestPlugin.new
-      assert_equal "rapidly_built/base_test", plugin.id
+      tool = TestTool.new
+      assert_equal "rapidly_built/base_test", tool.id
     end
 
     test "#id returns the custom ID when provided" do
-      plugin = TestPlugin.new(id: "custom_id")
-      assert_equal "custom_id", plugin.id
+      tool = TestTool.new(id: "custom_id")
+      assert_equal "custom_id", tool.id
     end
 
-    test "#root_path returns the root path of the plugin" do
-      plugin = TestPlugin.new(id: "test")
-      assert_equal "/test", plugin.send(:root_path)
+    test "#root_path returns the root path of the tool" do
+      tool = TestTool.new(id: "test")
+      assert_equal "/test", tool.send(:root_path)
     end
 
     test "required methods raise an error when not implemented" do
-      plugin = RapidlyBuilt::Base.new
+      tool = RapidlyBuilt::Base.new
 
       assert_raises NotImplementedError do
-        plugin.connect(nil)
+        tool.connect(nil)
       end
 
       assert_raises NotImplementedError do
-        plugin.mount(nil)
+        tool.mount(nil)
       end
     end
   end
