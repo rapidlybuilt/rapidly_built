@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in rapid_plugin.gemspec.
+# Specify your gem's dependencies in rapidly_built.gemspec.
 gemspec
 
 gem "puma"
