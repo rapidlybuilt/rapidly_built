@@ -5,13 +5,13 @@ module RapidlyBuilt
     class ContextTest < ActiveSupport::TestCase
       setup do
         @layout = Object.new
-        @application = Application.new
-        @context = Context.new(layout: @layout, application: @application)
+        @toolkit = Toolkit.new
+        @context = Context.new(layout: @layout, toolkit: @toolkit)
       end
 
-      test "initializes with layout and application" do
+      test "initializes with layout and toolkit" do
         assert_equal @layout, @context.layout
-        assert_equal @application, @context.application
+        assert_equal @toolkit, @context.toolkit
       end
     end
   end

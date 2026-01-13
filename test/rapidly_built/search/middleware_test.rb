@@ -4,12 +4,12 @@ module RapidlyBuilt
   module Search
     class MiddlewareTest < ActiveSupport::TestCase
       setup do
-        @application = Object.new
+        @toolkit = Object.new
       end
 
       test "#call raises NotImplementedError by default" do
         middleware = Middleware.new
-        context = Context.new(query_string: "test", application: @application)
+        context = Context.new(query_string: "test", toolkit: @toolkit)
 
         assert_raises NotImplementedError do
           middleware.call(context)
@@ -47,7 +47,7 @@ module RapidlyBuilt
         end
 
         middleware = test_middleware.new
-        context = Context.new(query_string: "test", application: @application)
+        context = Context.new(query_string: "test", toolkit: @toolkit)
         result = middleware.call(context)
 
         assert_equal 1, result.results.size
@@ -69,7 +69,7 @@ module RapidlyBuilt
         end
 
         middleware = test_middleware.new(url_helpers: url_helpers)
-        context = Context.new(query_string: "test", application: @application)
+        context = Context.new(query_string: "test", toolkit: @toolkit)
         result = middleware.call(context)
 
         assert_equal "/root", result.results.first.url

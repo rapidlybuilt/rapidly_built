@@ -1,6 +1,6 @@
 module RapidlyBuilt
   module Rails
-    # Mountable Rails engine that mounts all of a specific RapidlyBuilt::Application's tools
+    # Mountable Rails engine that mounts all of a specific RapidlyBuilt::Toolkit's tools
     #
     # @example
     #   # config/routes.rb
@@ -8,7 +8,7 @@ module RapidlyBuilt
     #     mount RapidlyBuilt::Engine, at: "/admin"
     #   end
     #
-    # @example With a specific application
+    # @example With a specific toolkit
     #   # config/routes.rb
     #   Rails.application.routes.draw do
     #     mount RapidlyBuilt::Engine, at: "/admin", defaults: { rapidly_built_app: "admin" }
@@ -17,37 +17,37 @@ module RapidlyBuilt
       isolate_namespace RapidlyBuilt
 
       routes do
-        Engine.draw_application_routes(RapidlyBuilt.config.default_application, self)
+        Engine.draw_toolkit_routes(RapidlyBuilt.config.default_toolkit, self)
       end
 
-      # Get the application for this engine instance
-      # Subclasses override this to return a specific application
+      # Get the toolkit for this engine instance
+      # Subclasses override this to return a specific toolkit
       #
-      # @return [Application] The application instance
-      def tool_application
-        RapidlyBuilt.config.default_application
+      # @return [Toolkit] The toolkit instance
+      def toolkit
+        RapidlyBuilt.config.default_toolkit
       end
 
       class << self
-        def build_engine_for(app)
+        def build_engine_for(toolkit)
           Class.new(Rails::Engine) do
-            define_method :tool_application do
-              app
+            define_method :toolkit do
+              toolkit
             end
 
             routes do
-              Engine.draw_application_routes(app, self)
+              Engine.draw_toolkit_routes(toolkit, self)
             end
           end
         end
 
-        # Mount all tools from an application onto the routes mapper
+        # Mount all tools from a toolkit onto the routes mapper
         #
-        # @param app [Application] The application containing tools to mount
+        # @param toolkit [Toolkit] The toolkit containing tools to mount
         # @param routes [ActionDispatch::Routing::Mapper] The routes mapper
-        def draw_application_routes(app, routes)
-          app.mark_as_mounted!
-          app.tools.each do |tool|
+        def draw_toolkit_routes(toolkit, routes)
+          toolkit.mark_as_mounted!
+          toolkit.tools.each do |tool|
             tool.mount(routes)
           end
         end

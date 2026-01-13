@@ -7,8 +7,6 @@ module RapidlyBuilt
       class TestController < ActionController::Base
         include ControllerHelper
 
-        before_action :initialize_rapid_layout
-
         def index
           render plain: "OK"
         end
@@ -38,8 +36,8 @@ module RapidlyBuilt
       end
 
       setup do
-        @app = RapidlyBuilt.config.default_application
-        @admin_app = RapidlyBuilt.config.build_application(:admin, tools: [])
+        @toolkit = RapidlyBuilt.config.default_toolkit
+        @admin_toolkit = RapidlyBuilt.config.build_toolkit(:admin, tools: [])
         @controller = TestController.new
         @routes = ActionDispatch::Routing::RouteSet.new
         @routes.draw do
@@ -48,16 +46,16 @@ module RapidlyBuilt
         @controller.instance_variable_set(:@_routes, @routes)
       end
 
-      test "#application returns default application when no param is set" do
+      test "#toolkit returns default toolkit when no param is set" do
         get :index
 
-        assert_equal @app, @controller.send(:application)
+        assert_equal @toolkit, @controller.send(:toolkit)
       end
 
-      test "#application returns application based on app param" do
+      test "#toolkit returns toolkit based on app param" do
         get :index, params: { app_id: "admin" }
 
-        assert_equal @admin_app, @controller.send(:application)
+        assert_equal @admin_toolkit, @controller.send(:toolkit)
       end
 
       test "#rapid_layout returns the layout after initialization" do
@@ -66,23 +64,23 @@ module RapidlyBuilt
         assert_not_nil @controller.send(:rapid_layout)
       end
 
-      test "nonexistent application raises ApplicationNotFoundError" do
-        assert_raises ApplicationNotFoundError do
+      test "nonexistent toolkit raises ToolkitNotFoundError" do
+        assert_raises ToolkitNotFoundError do
           get :index, params: { app_id: "nonexistent" }
         end
       end
 
       test "running layout middleware" do
-        @app.layout_middleware.use(TestLayoutMiddleware)
+        @toolkit.layout_middleware.use(TestLayoutMiddleware)
 
         get :index
 
         # Get the middleware instance from the stack
-        middleware_entry = @app.layout_middleware.entries.first
+        middleware_entry = @toolkit.layout_middleware.entries.first
         middleware = middleware_entry.instance
 
         assert_not_nil middleware.called_with_context.layout
-        assert_equal @app, middleware.called_with_context.application
+        assert_equal @toolkit, middleware.called_with_context.toolkit
       end
 
       test "finalizing the layout" do
@@ -91,7 +89,7 @@ module RapidlyBuilt
 
         @controller.define_singleton_method :finalize_layout do |context|
           finalized_contexts << context
-          Layout::Context.new(layout: modified_layout, application: context.application)
+          Layout::Context.new(layout: modified_layout, toolkit: context.toolkit)
         end
 
         get :index

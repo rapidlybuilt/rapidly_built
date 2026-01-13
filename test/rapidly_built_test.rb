@@ -1,7 +1,7 @@
 require "test_helper"
 
 class RapidlyBuiltTest < ActiveSupport::TestCase
-  class TestTool < RapidlyBuilt::Base
+  class TestTool < RapidlyBuilt::Tool
     def connect(app)
     end
 
@@ -13,9 +13,9 @@ class RapidlyBuiltTest < ActiveSupport::TestCase
     assert RapidlyBuilt::VERSION
   end
 
-  test "register_tool! adds tool to default application" do
+  test "register_tool! adds tool to default toolkit" do
     tool = TestTool.new
     RapidlyBuilt.register_tool!(tool)
-    assert_equal [ tool ], RapidlyBuilt.config.default_application.tools
+    assert_equal [ tool ], RapidlyBuilt.config.default_toolkit.tools
   end
 end

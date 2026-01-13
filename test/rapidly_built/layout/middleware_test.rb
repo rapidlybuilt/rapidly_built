@@ -5,12 +5,12 @@ module RapidlyBuilt
     class MiddlewareTest < ActiveSupport::TestCase
       setup do
         @layout = Object.new
-        @application = Application.new
+        @toolkit = Toolkit.new
       end
 
       test "#call raises NotImplementedError by default" do
         middleware = Middleware.new
-        context = Context.new(layout: @layout, application: @application)
+        context = Context.new(layout: @layout, toolkit: @toolkit)
 
         assert_raises NotImplementedError do
           middleware.call(context)
@@ -48,7 +48,7 @@ module RapidlyBuilt
         end
 
         middleware = test_middleware.new
-        context = Context.new(layout: @layout, application: @application)
+        context = Context.new(layout: @layout, toolkit: @toolkit)
         result = middleware.call(context)
 
         assert_equal context, result
@@ -70,7 +70,7 @@ module RapidlyBuilt
         end
 
         middleware = test_middleware.new(url_helpers: url_helpers)
-        context = Context.new(layout: @layout, application: @application)
+        context = Context.new(layout: @layout, toolkit: @toolkit)
         result = middleware.call(context)
 
         assert_equal context, result

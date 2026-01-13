@@ -28,10 +28,10 @@ RapidlyBuilt.register_tool! MyGem::Tool
 
 ```ruby
 # lib/my_gem/tool.rb
-class MyGem::Tool < RapidlyBuilt::Base
-  def connect(app)
-    app.search_middleware.use MyGem::Tool::Search
-    app.layout_middleware.use MyGem::Tool::LayoutBuilder
+class MyGem::Tool < RapidlyBuilt::Tool
+  def connect(toolkit)
+    toolkit.search_middleware.use MyGem::Tool::Search
+    toolkit.layout_middleware.use MyGem::Tool::LayoutBuilder
   end
 
   def mount(routes)
@@ -57,15 +57,15 @@ class ApplicationController < ActionController::Base
 end
 ```
 
-## Multiple Applications
+## Multiple Toolkits
 
-The default application uses registered tools. In order to use only a subset of the registered tools or split the tools into separate mountable engines for different sets of users, you can explicitly define the applications.
+The default toolkit uses registered tools. In order to use only a subset of the registered tools or split the tools into separate mountable engines for different sets of users, you can explicitly define the toolkits.
 
 ```ruby
 # config/initializers/rapidlybuilt.rb
 RapidlyBuilt.config do |config|
-  config.build_application :admin, tools: [MyAdmin::Tool, AnotherAdmin::Tool]
-  config.build_application :root, tools: [MyRoot::Tool, AnotherRoot::Tool]
+  config.build_toolkit :admin, tools: [MyAdmin::Tool, AnotherAdmin::Tool]
+  config.build_toolkit :root, tools: [MyRoot::Tool, AnotherRoot::Tool]
 end
 ```
 
@@ -73,12 +73,12 @@ end
 # config/routes.rb
 Rails.application.routes.draw do
   # explicitly mount it The Rails Way
-  mount RapidlyBuilt::Rails::Engine, at: "/admin", as: "admin", defaults: { rapidly_built_application: "admin" }
-  mount RapidlyBuilt::Rails::Engine, at: "/root", as: "root", defaults: { rapidly_built_application: "root" }
+  mount RapidlyBuilt::Rails::Engine, at: "/admin", as: "admin", defaults: { app_id: "admin" }
+  mount RapidlyBuilt::Rails::Engine, at: "/root", as: "root", defaults: { app_id: "root" }
 
   # or use the helper for convenience
-  mount_rails_built_application :admin
-  mount_rails_built_application :root
+  mount_rapidly_built_toolkit :admin
+  mount_rapidly_built_toolkit :root
 end
 ```
 
@@ -87,4 +87,3 @@ Contribution directions go here.
 
 ## License
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-

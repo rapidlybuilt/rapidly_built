@@ -2,8 +2,8 @@ module RapidlyBuilt
   module Rails
     # Controller helper for integrating RapidlyBuilt with Rails controllers
     #
-    # Provides access to the mounted RapidlyBuilt::Application instance and
-    # sets up layout initialization via the application's layout middleware.
+    # Provides access to the mounted RapidlyBuilt::Toolkit instance and
+    # sets up layout initialization via the toolkit's layout middleware.
     #
     # @example
     #   class ApplicationController < ActionController::Base
@@ -11,18 +11,19 @@ module RapidlyBuilt
     #   end
     module ControllerHelper
       extend ActiveSupport::Concern
+      include RapidUI::UsesLayout
 
       included do
-        before_action :initialize_rapid_layout
+        before_action :setup_rapidly_built
       end
 
       private
 
-      # Get the RapidlyBuilt::Application instance for the current request
+      # Get the RapidlyBuilt::Toolkit instance for the current request
       #
-      # @return [Application, nil] The application instance, or nil if not found
-      def application
-        @application ||= find_application || raise(ApplicationNotFoundError, "Application not found")
+      # @return [Toolkit, nil] The toolkit instance, or nil if not found
+      def toolkit
+        @toolkit ||= find_toolkit || raise(ToolkitNotFoundError, "Toolkit not found")
       end
 
       # Get the current layout instance
@@ -33,21 +34,21 @@ module RapidlyBuilt
         @rapid_layout
       end
 
-      # Find the RapidlyBuilt::Application instance using the app parameter
+      # Find the RapidlyBuilt::Toolkit instance using the app parameter
       #
-      # @return [Application, nil] The application instance, or nil if not found
-      def find_application(name = params[:app_id])
-        RapidlyBuilt.config.application(name)
+      # @return [Toolkit, nil] The toolkit instance, or nil if not found
+      def find_toolkit(name = params[:app_id])
+        RapidlyBuilt.config.toolkit(name)
       end
 
-      # Initialize the layout using the application's layout middleware
-      def initialize_rapid_layout
-        return unless application
+      # Initialize the layout using the toolkit's layout middleware
+      def setup_rapidly_built
+        return unless toolkit
 
-        context = Layout::Context.new(layout:, application:)
+        context = Layout::Context.new(layout:, toolkit:)
 
         # Run the layout middleware stack
-        context = application.layout_middleware.call(context)
+        context = toolkit.layout_middleware.call(context)
         context = finalize_layout(context)
 
         @rapid_layout = context.layout

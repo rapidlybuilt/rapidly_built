@@ -3,7 +3,7 @@ require "test_helper"
 module RapidlyBuilt
   class BaseTest < ActiveSupport::TestCase
     # Test tool class scoped to this test class
-    class TestTool < Base
+    class TestTool < Tool
       def connect(app)
       end
 
@@ -27,7 +27,7 @@ module RapidlyBuilt
     end
 
     test "required methods raise an error when not implemented" do
-      tool = RapidlyBuilt::Base.new
+      tool = RapidlyBuilt::Tool.new
 
       assert_raises NotImplementedError do
         tool.connect(nil)

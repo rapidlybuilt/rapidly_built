@@ -1,9 +1,9 @@
 module RapidlyBuilt
   # This is the base class for all tools within the RapidlyBuilt system.
-  # To create a tool, subclass RapidlyBuilt::Base and implement the required interface.
+  # To create a tool, subclass RapidlyBuilt::Tool and implement the required interface.
   #
   # Example:
-  #   class MyGem::Tool < RapidlyBuilt::Base
+  #   class MyGem::Tool < RapidlyBuilt::Tool
   #     def connect(app)
   #       app.search_middleware.use MyGem::Tool::Search
   #       app.layout_middleware.use MyGem::Tool::LayoutBuilder
@@ -17,7 +17,7 @@ module RapidlyBuilt
   # Tools inheriting from this class can register their own search, layout, and UI extensions.
   # They integrate seamlessly into the unified RapidlyBuilt web portal.
   # See the README for more usage examples and integration patterns.
-  class Base
+  class Tool
     attr_reader :id
 
     # @option id [String] the ID of the tool. Defaults to the module name of the tool class.
@@ -28,7 +28,7 @@ module RapidlyBuilt
     # Called when the tool is connected to an application.
     # Subclasses should implement this method to register middleware and services.
     #
-    # @param app [RapidlyBuilt::Application] The application instance
+    # @param app [RapidlyBuilt::Toolkit] The toolkit instance
     def connect(app)
       raise NotImplementedError, "#{self.class} must implement #connect"
     end

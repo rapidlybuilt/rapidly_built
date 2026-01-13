@@ -1,71 +1,71 @@
 module RapidlyBuilt
-  # Configuration class for managing RapidlyBuilt applications
+  # Configuration class for managing RapidlyBuilt toolkits
   #
   # @example
   #   RapidlyBuilt.config do |config|
-  #     config.build_application :admin, tools: [MyAdmin::Tool, AnotherAdmin::Tool]
-  #     config.build_application :root, tools: [MyRoot::Tool, AnotherRoot::Tool]
+  #     config.build_toolkit :admin, tools: [MyAdmin::Tool, AnotherAdmin::Tool]
+  #     config.build_toolkit :root, tools: [MyRoot::Tool, AnotherRoot::Tool]
   #   end
   class Config
     def initialize
-      @applications = {}
+      @toolkits = {}
       @engines = {}
     end
 
-    # Build an application with the given name and tools
+    # Build a toolkit with the given name and tools
     #
-    # @param name [Symbol, String] The name of the application
+    # @param name [Symbol, String] The name of the toolkit
     # @param tools [Array<Class>] Array of tool classes to instantiate and add
-    # @return [Application] The created application
-    def build_application(name, tools: [])
+    # @return [Toolkit] The created toolkit
+    def build_toolkit(name, tools: [])
       name = name.to_sym
 
-      app = Application.new
+      toolkit = Toolkit.new
       tools.each do |tool_class|
-        app.add_tool(tool_class.new)
+        toolkit.add_tool(tool_class.new)
       end
 
-      @applications[name] = app
-      @engines[name] = Rails::Engine.build_engine_for(app) if defined?(::Rails::Engine)
+      @toolkits[name] = toolkit
+      @engines[name] = Rails::Engine.build_engine_for(toolkit) if defined?(::Rails::Engine)
 
-      app
+      toolkit
     end
 
-    # Get the default application, creating it if it doesn't exist
+    # Get the default toolkit, creating it if it doesn't exist
     #
-    # @return [Application] The default application instance
-    def default_application
-      @applications[:default] ||= Application.new
+    # @return [Toolkit] The default toolkit instance
+    def default_toolkit
+      @toolkits[:default] ||= Toolkit.new
     end
 
-    # Get an application by name
+    # Get a toolkit by name
     #
-    # @param name [Symbol, String, nil] The application name, or nil for default
-    # @return [Application, nil] The application instance, or nil if not found
-    def application(name = nil)
+    # @param name [Symbol, String, nil] The toolkit name, or nil for default
+    # @return [Toolkit, nil] The toolkit instance, or nil if not found
+    def toolkit(name = nil)
       if name.nil? || name == :default
-        default_application
+        default_toolkit
       else
-        @applications[name.to_sym] || raise(ApplicationNotFoundError, "Application #{name.inspect} not found")
+        @toolkits[name.to_sym] || raise(ToolkitNotFoundError, "Toolkit #{name.inspect} not found")
       end
     end
 
-    # Get all applications
+    # Get all toolkits
     #
-    # @return [Hash] Hash of application name to Application instance
-    def applications
-      @applications.dup
+    # @return [Hash] Hash of toolkit name to Toolkit instance
+    def toolkits
+      @toolkits.dup
     end
 
-    # Get the engine class for a specific application
+    # Get the engine class for a specific toolkit
     #
-    # @param name [Symbol, String, nil] The application name, or nil for default
-    # @return [Class] The engine class for the application
+    # @param name [Symbol, String, nil] The toolkit name, or nil for default
+    # @return [Class] The engine class for the toolkit
     def engine(name = nil)
       if name.nil? || name == :default
         Rails::Engine
       else
-        @engines[name.to_sym] || raise(ApplicationNotFoundError, "Application #{name.inspect} for engine not found")
+        @engines[name.to_sym] || raise(ToolkitNotFoundError, "Toolkit #{name.inspect} for engine not found")
       end
     end
   end

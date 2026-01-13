@@ -10,3 +10,6 @@ gem "rubocop-rails-omakase", require: false
 
 # Start debugger with binding.b [https://github.com/ruby/debug]
 # gem "debug", ">= 1.0.0"
+
+# TODO: declare this as a dependency in the gemspec
+gem "rapid_ui", path: "../rapid_ui"
