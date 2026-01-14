@@ -38,6 +38,7 @@ module RapidlyBuilt
             Engine.draw_toolkit_routes(toolkit, self)
           end
 
+          # TODO: name the class so bin/rails routes doesn't show #<Class:0x0000000000000000>
           engine_class
         end
 

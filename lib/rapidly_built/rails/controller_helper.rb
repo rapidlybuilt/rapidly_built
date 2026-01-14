@@ -30,6 +30,7 @@ module RapidlyBuilt
         context = Toolkit::Context.new(
           toolkit: RapidlyBuilt.config.find_toolkit!(app_id),
           ui:, # from RapidUI::UsesLayout
+          controller: self,
         )
 
         # API for modifying the
