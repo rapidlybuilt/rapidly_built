@@ -21,7 +21,7 @@ module RapidlyBuilt
       end
 
       setup do
-        @toolkit = Toolkit::Base.new
+        @toolkit = Toolkit::Base.new(:default)
       end
 
       test "initializes with empty tools array" do

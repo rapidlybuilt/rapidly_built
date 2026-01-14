@@ -9,7 +9,6 @@ module RapidlyBuilt
   class Config
     def initialize
       @toolkits = {}
-      @engines = {}
     end
 
     # Build a toolkit with the given name and tools
@@ -21,14 +20,12 @@ module RapidlyBuilt
       name = name.to_sym
 
       klass = options[:class] || Toolkit::Base
-      toolkit = klass.new
+      toolkit = klass.new(name)
       tools.each do |tool_class|
         toolkit.add_tool(tool_class.new)
       end
 
       @toolkits[name] = toolkit
-      @engines[name] = Rails::Engine.build_engine_for(toolkit) if defined?(::Rails::Engine)
-
       toolkit
     end
 
@@ -37,6 +34,13 @@ module RapidlyBuilt
     # @return [Toolkit] The default toolkit instance
     def default_toolkit
       @toolkits[:default] ||= build_toolkit(:default)
+    end
+
+    # Define an engine for the default toolkit
+    #
+    # @return [Class] The engine class
+    def define_engine
+      default_toolkit.engine
     end
 
     # Get a toolkit by name
@@ -63,11 +67,7 @@ module RapidlyBuilt
     # @param name [Symbol, String, nil] The toolkit name, or nil for default
     # @return [Class] The engine class for the toolkit
     def engine(name = nil)
-      if name.nil? || name == :default
-        Rails::Engine
-      else
-        @engines[name.to_sym] || raise(ToolkitNotFoundError, "Toolkit #{name.inspect} for engine not found")
-      end
+      find_toolkit!(name).engine
     end
   end
 end

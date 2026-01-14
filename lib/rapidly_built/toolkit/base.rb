@@ -13,11 +13,13 @@ module RapidlyBuilt
     #   toolkit.search_middleware.use(MySearchMiddleware)
     #   toolkit.context_middleware.use(MySetupMiddleware)
     class Base
+      attr_reader :id
       attr_reader :tools
       attr_reader :context_middleware
       attr_reader :search_middleware
 
-      def initialize
+      def initialize(id)
+        @id = id
         @tools = []
         @search_middleware = Middleware.new
         @context_middleware = Middleware.new
@@ -53,6 +55,10 @@ module RapidlyBuilt
         @tools << tool
         tool.connect(self)
         self
+      end
+
+      def engine
+        @engine ||= Rails::Engine.build_engine_for(self)
       end
     end
   end

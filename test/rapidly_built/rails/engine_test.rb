@@ -28,25 +28,14 @@ module RapidlyBuilt
         @toolkit.add_tool(@tool2)
       end
 
-      test "#toolkit returns the default toolkit" do
-        # Use the singleton config's default toolkit
-        default_toolkit = RapidlyBuilt.config.default_toolkit
-        engine = Engine.allocate
-
-        assert_equal default_toolkit, engine.toolkit
-      end
-
-      test "default engine mounts all tools" do
-        engine_instance = Engine.instance
-        engine_instance.routes.draw { }
-
-        assert @toolkit.mounted?
-        assert_not_nil @tool1.mounted_routes
-        assert_not_nil @tool2.mounted_routes
+      test "#toolkit raises an error on the default class" do
+        assert_raises NotImplementedError, "Subclasses must implement #toolkit" do
+          Engine.allocate.toolkit
+        end
       end
 
       test "#build_engine_for mounts all tools" do
-        toolkit = Toolkit::Base.new
+        toolkit = Toolkit::Base.new(:default)
         tool1 = TestTool.new
         tool2 = TestTool.new
         toolkit.add_tool(tool1)

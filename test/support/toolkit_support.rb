@@ -1,10 +1,8 @@
 module ToolkitSupport
-  def redraw_routes
-    # Clear and redraw the engine's routes so the new tool is mounted
-    RapidlyBuilt::Rails::Engine.instance_variable_set(:@routes, nil)
-    RapidlyBuilt::Rails::Engine.routes.draw { }
-
-    # Reload app routes to pick up the engine's new routes
+  def redraw_routes(&block)
+    # Just reload app routes - the custom engine's routes are drawn
+    # when the engine class is created via build_engine_for
     Rails.application.reload_routes!
+    Rails.application.routes.draw(&block) if block_given?
   end
 end

@@ -16,29 +16,29 @@ module RapidlyBuilt
     class Engine < ::Rails::Engine
       isolate_namespace RapidlyBuilt
 
-      routes do
-        Engine.draw_toolkit_routes(RapidlyBuilt.config.default_toolkit, self)
-      end
-
       # Get the toolkit for this engine instance
       # Subclasses override this to return a specific toolkit
       #
       # @return [Toolkit] The toolkit instance
       def toolkit
-        RapidlyBuilt.config.default_toolkit
+        raise NotImplementedError, "Subclasses must implement #toolkit"
       end
 
       class << self
         def build_engine_for(toolkit)
-          Class.new(Rails::Engine) do
+          engine_class = Class.new(Rails::Engine) do
             define_method :toolkit do
               toolkit
             end
-
-            routes do
-              Engine.draw_toolkit_routes(toolkit, self)
-            end
           end
+
+          # Draw routes on the new engine class after it's created
+          # (routes do blocks inside Class.new don't register properly)
+          engine_class.routes.draw do
+            Engine.draw_toolkit_routes(toolkit, self)
+          end
+
+          engine_class
         end
 
         # Mount all tools from a toolkit onto the routes mapper

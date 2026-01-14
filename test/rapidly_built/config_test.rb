@@ -126,24 +126,6 @@ module RapidlyBuilt
       assert_not_same toolkits1, toolkits2
     end
 
-    test "#engine returns Rails::Engine when name is nil" do
-      engine = @config.engine(nil)
-
-      assert_equal Rails::Engine, engine
-    end
-
-    test "#engine returns Rails::Engine when name is :default" do
-      engine = @config.engine(:default)
-
-      assert_equal Rails::Engine, engine
-    end
-
-    test "#engine returns Rails::Engine when no name is provided" do
-      engine = @config.engine
-
-      assert_equal Rails::Engine, engine
-    end
-
     test "#engine returns the engine for a specific toolkit" do
       toolkit = @config.build_toolkit(:admin, tools: [])
       engine = @config.engine(:admin)
