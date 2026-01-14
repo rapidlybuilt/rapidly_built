@@ -30,7 +30,6 @@ module RapidlyBuilt
     #
     # @param app [RapidlyBuilt::Toolkit] The toolkit instance
     def connect(app)
-      raise NotImplementedError, "#{self.class} must implement #connect"
     end
 
     # Called when the tool's routes should be mounted.
@@ -38,7 +37,6 @@ module RapidlyBuilt
     #
     # @param routes [ActionDispatch::Routing::Mapper] The routes mapper
     def mount(routes)
-      raise NotImplementedError, "#{self.class} must implement #mount"
     end
 
     private

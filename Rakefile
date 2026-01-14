@@ -6,15 +6,24 @@ require "rubocop/rake_task"
 
 RuboCop::RakeTask.new
 
-# Define test task to run tests in the dummy Rails app
-task :test do
-  system("bin/test")
-end
+namespace :test do
+  desc "Run tests in the dummy Rails app"
+  task :default do
+    system("bin/test")
+  end
 
-namespace :docs do
-  task :test do
-    system("bin/docs bin/test")
+  desc "Run all tests including system tests"
+  task :all do
+    files = Dir.glob("test/**/*_test.rb")
+    system("bin/test", *files)
+  end
+
+  desc "Run only system tests"
+  task :system do
+    system("bin/test test/system")
   end
 end
 
-task default: %i[rubocop test]
+task test: "test:default"
+
+task default: %i[rubocop test:all]

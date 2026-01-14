@@ -36,7 +36,7 @@ module RapidlyBuilt
     #
     # @return [Toolkit] The default toolkit instance
     def default_toolkit
-      @toolkits[:default] ||= Toolkit::Base.new
+      @toolkits[:default] ||= build_toolkit(:default)
     end
 
     # Get a toolkit by name

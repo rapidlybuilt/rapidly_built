@@ -26,16 +26,11 @@ module RapidlyBuilt
       assert_equal "/test", tool.send(:root_path)
     end
 
-    test "required methods raise an error when not implemented" do
+    test "base tool exposes connect and mount methods with safe defaults" do
       tool = RapidlyBuilt::Tool.new
 
-      assert_raises NotImplementedError do
-        tool.connect(nil)
-      end
-
-      assert_raises NotImplementedError do
-        tool.mount(nil)
-      end
+      assert_nothing_raised { tool.connect(nil) }
+      assert_nothing_raised { tool.mount(nil) }
     end
   end
 end

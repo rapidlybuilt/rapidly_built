@@ -13,3 +13,11 @@ gem "rubocop-rails-omakase", require: false
 
 # TODO: declare this as a dependency in the gemspec
 gem "rapid_ui", path: "../rapid_ui"
+
+# Testing gems
+group :test do
+  gem "capybara", "~> 3.39"
+  gem "cuprite", "~> 0.15"
+  gem "simplecov", "~> 0.22"
+  # gem "spy", "~> 1.0"
+end

@@ -9,7 +9,7 @@ module RapidlyBuilt
         delegate :layout=
       end
 
-      def initialize(toolkit:, ui:s)
+      def initialize(toolkit:, ui:)
         @toolkit = toolkit
         @ui = ui
       end

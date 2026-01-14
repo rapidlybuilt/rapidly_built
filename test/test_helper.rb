@@ -11,6 +11,10 @@ end
 require_relative "../test/dummy/config/environment"
 require "rails/test_help"
 
+Dir.chdir("test") do
+  Dir.glob("support/**/*.rb").sort.each { |f| require_relative f }
+end
+
 # Reset RapidlyBuilt configuration after each test to prevent state leakage
 class ActiveSupport::TestCase
   teardown do
