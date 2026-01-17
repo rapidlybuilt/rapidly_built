@@ -19,10 +19,13 @@ module RapidlyBuilt
   # See the README for more usage examples and integration patterns.
   class Tool
     attr_reader :id
+    attr_reader :path
 
-    # @option id [String] the ID of the tool. Defaults to the module name of the tool class.
-    def initialize(id: default_id)
+    # @option id [String] the ID of the tool. Defaults to nil.
+    # @option path [String] the path of the tool. Defaults to the module name of the tool class.
+    def initialize(id: nil, path: default_path)
       @id = id
+      @path = path
     end
 
     # Called when the tool is connected to an application.
@@ -41,16 +44,14 @@ module RapidlyBuilt
 
     private
 
-    # @return [String] the root path of the tool
-    def root_path
-      "/#{id}"
-    end
-
     # @return [String] the default ID of the tool
-    def default_id
+    def default_path
       class_name = self.class.name
       module_name = ActiveSupport::Inflector.deconstantize(class_name)
-      ActiveSupport::Inflector.underscore(module_name)
+      parent_name = module_name.split("::").last
+
+      path = ActiveSupport::Inflector.underscore(parent_name)
+      ActiveSupport::Inflector.dasherize(path)
     end
   end
 end

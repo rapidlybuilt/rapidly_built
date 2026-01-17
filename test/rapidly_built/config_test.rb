@@ -28,8 +28,8 @@ module RapidlyBuilt
       assert_equal toolkit, @config.find_toolkit!(:admin)
     end
 
-    test "#build_toolkit adds tools to the toolkit" do
-      toolkit = @config.build_toolkit(:admin, tools: [ TestTool, TestTool ])
+    test "#build_toolkit adds tools to the toolkit by class or instance" do
+      toolkit = @config.build_toolkit(:admin, tools: [ TestTool, TestTool.new(id: "tool2") ])
 
       assert_equal 2, toolkit.tools.size
       assert_instance_of TestTool, toolkit.tools.first
@@ -66,6 +66,12 @@ module RapidlyBuilt
       toolkit2 = @config.default_toolkit
 
       assert_equal toolkit1, toolkit2
+    end
+
+    test "#default_engine returns the engine for the default toolkit" do
+      engine = @config.default_engine
+      assert_equal @config.default_toolkit.engine, @config.engine
+      assert_instance_of Class, engine
     end
 
     test "#find_toolkit! returns the default toolkit when name is nil" do

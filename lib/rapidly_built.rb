@@ -4,6 +4,8 @@ require "rapid_ui"
 module RapidlyBuilt
   class Error < StandardError; end
   class ToolkitNotFoundError < Error; end
+  class ToolNotFoundError < Error; end
+  class ToolNotUniqueError < Error; end
 
   def self.loader
     @loader ||= Zeitwerk::Loader.for_gem.tap do |loader|

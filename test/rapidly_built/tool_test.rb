@@ -1,9 +1,9 @@
 require "test_helper"
 
 module RapidlyBuilt
-  class BaseTest < ActiveSupport::TestCase
+  class ToolTest < ActiveSupport::TestCase
     # Test tool class scoped to this test class
-    class TestTool < Tool
+    class MyTool < Tool
       def connect(app)
       end
 
@@ -11,19 +11,25 @@ module RapidlyBuilt
       end
     end
 
-    test "#id returns the default ID when not provided" do
-      tool = TestTool.new
-      assert_equal "rapidly_built/base_test", tool.id
+    test "#id is nil by default" do
+      tool = MyTool.new
+
+      assert_nil tool.id
     end
 
     test "#id returns the custom ID when provided" do
-      tool = TestTool.new(id: "custom_id")
+      tool = MyTool.new(id: "custom_id")
       assert_equal "custom_id", tool.id
     end
 
-    test "#root_path returns the root path of the tool" do
-      tool = TestTool.new(id: "test")
-      assert_equal "/test", tool.send(:root_path)
+    test "#path is the parent of the tool class by default" do
+      tool = MyTool.new
+      assert_equal "tool-test", tool.path
+    end
+
+    test "#path is settable" do
+      tool = MyTool.new(path: "test")
+      assert_equal "test", tool.path
     end
 
     test "base tool exposes connect and mount methods with safe defaults" do

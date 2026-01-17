@@ -60,7 +60,7 @@ module RapidlyBuilt
 
       test "#add_tool can add multiple tools" do
         tool1 = TestTool.new
-        tool2 = TestTool.new
+        tool2 = TestTool.new(id: "tool2")
         @toolkit.add_tool(tool1)
         @toolkit.add_tool(tool2)
 
@@ -74,6 +74,39 @@ module RapidlyBuilt
         assert_raises RuntimeError, "Cannot add tools to a toolkit that has already been mounted in a Rails engine" do
           @toolkit.add_tool(tool)
         end
+      end
+
+      test "raises an error when adding a tool with the same class and id" do
+        tool1 = TestTool.new
+        tool2 = TestTool.new(id: tool1.id)
+        @toolkit.add_tool(tool1)
+        assert_raises ToolNotUniqueError, "Tool TestTool with id #{tool1.id} not found" do
+          @toolkit.add_tool(tool2)
+        end
+      end
+
+      test "#find_tool! raises ToolNotFoundError if tool is not found" do
+        assert_raises ToolNotFoundError, "Tool TestTool with id nil not found" do
+          @toolkit.find_tool!(TestTool)
+        end
+      end
+
+      test "#find_tool! returns tool if found" do
+        tool = TestTool.new
+        @toolkit.add_tool(tool)
+
+        assert_equal tool, @toolkit.find_tool!(TestTool)
+      end
+
+      test "#find_tool returns tool if found" do
+        tool = TestTool.new
+        @toolkit.add_tool(tool)
+
+        assert_equal tool, @toolkit.find_tool(TestTool)
+      end
+
+      test "#find_tool returns nil if tool is not found" do
+        assert_nil @toolkit.find_tool(TestTool)
       end
     end
   end

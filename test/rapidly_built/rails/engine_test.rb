@@ -23,7 +23,7 @@ module RapidlyBuilt
         @config = RapidlyBuilt.config
         @toolkit = @config.default_toolkit
         @tool1 = TestTool.new
-        @tool2 = TestTool.new
+        @tool2 = TestTool.new(id: "tool2")
         @toolkit.add_tool(@tool1)
         @toolkit.add_tool(@tool2)
       end
@@ -37,7 +37,7 @@ module RapidlyBuilt
       test "#build_engine_for mounts all tools" do
         toolkit = Toolkit::Base.new(:default)
         tool1 = TestTool.new
-        tool2 = TestTool.new
+        tool2 = TestTool.new(id: "tool2")
         toolkit.add_tool(tool1)
         toolkit.add_tool(tool2)
 

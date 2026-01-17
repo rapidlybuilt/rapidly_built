@@ -48,13 +48,34 @@ module RapidlyBuilt
       # @return [self]
       # @raise [RuntimeError] if the toolkit has already been mounted
       def add_tool(tool)
-        if mounted?
+        if find_tool(tool.class, id: tool.id)
+          raise ToolNotUniqueError, "Tool #{tool.class.name} with id #{tool.id.inspect} already exists"
+        elsif mounted?
           raise RuntimeError, "Cannot add tools to a toolkit that has already been mounted in a Rails engine"
         end
 
         @tools << tool
         tool.connect(self)
         self
+      end
+
+      # Find a tool by class and optional ID
+      #
+      # @param klass [Class] The tool class
+      # @param id [String, nil] The ID of the tool
+      # @return [Tool] The found tool
+      # @raise [ToolNotFoundError] if the tool is not found
+      def find_tool!(klass, id: nil)
+        find_tool(klass, id: id) || raise(ToolNotFoundError, "Tool #{klass.name} with id #{id.inspect} not found")
+      end
+
+      # Find a tool by class and optional ID
+      #
+      # @param klass [Class] The tool class
+      # @param id [String, nil] The ID of the tool
+      # @return [Tool, nil] The found tool, or nil if not found
+      def find_tool(klass, id: nil)
+        @tools.find { |tool| tool.is_a?(klass) && tool.id == id }
       end
 
       def engine

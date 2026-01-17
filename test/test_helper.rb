@@ -5,6 +5,8 @@ require "simplecov"
 SimpleCov.start do
   add_filter "/test/"
   add_filter "/lib/rapidly_built/version.rb" # loaded too early to track
+  add_filter "/lib/tasks/rapidly_built_tasks.rake"
+
   track_files "lib/**/*.rb"
 end
 

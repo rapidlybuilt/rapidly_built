@@ -21,8 +21,9 @@ module RapidlyBuilt
 
       klass = options[:class] || Toolkit::Base
       toolkit = klass.new(name)
-      tools.each do |tool_class|
-        toolkit.add_tool(tool_class.new)
+      tools.each do |tool|
+        tool = tool.new if tool.is_a?(Class)
+        toolkit.add_tool(tool)
       end
 
       @toolkits[name] = toolkit
@@ -39,7 +40,7 @@ module RapidlyBuilt
     # Define an engine for the default toolkit
     #
     # @return [Class] The engine class
-    def define_engine
+    def default_engine
       default_toolkit.engine
     end
 
