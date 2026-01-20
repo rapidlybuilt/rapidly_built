@@ -10,6 +10,7 @@ jobs:
     env:
       RUBY_VERSION: 3.4.4
       RUBOCOP_CACHE_ROOT: tmp/rubocop
+      BUNDLE_RUBYGEMS__PKG__GITHUB__COM: ${{ secrets.BUNDLE_RUBYGEMS__PKG__GITHUB__COM }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -35,6 +36,8 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    env:
+      BUNDLE_RUBYGEMS__PKG__GITHUB__COM: ${{ secrets.BUNDLE_RUBYGEMS__PKG__GITHUB__COM }}
 
     steps:
       - name: Checkout code
