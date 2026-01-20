@@ -3,20 +3,20 @@ require_relative "lib/rapidly_built/version"
 Gem::Specification.new do |spec|
   spec.name        = "rapidly_built"
   spec.version     = RapidlyBuilt::VERSION
-  spec.authors     = [ "dcunning" ]
-  spec.email       = [ "31681+dcunning@users.noreply.github.com" ]
-  spec.homepage    = "TODO"
-  spec.summary     = "TODO: Summary of RapidlyBuilt."
-  spec.description = "TODO: Description of RapidlyBuilt."
+  spec.authors     = [ "Dan Cunning" ]
+  spec.email       = [ "dan@rapidlybuilt.com" ]
+  spec.homepage    = "https://rapidlybuilt.com/tools/rapidly-built"
+  spec.summary     = "The foundation for building RapidlyBuilt tools."
+  spec.description = "The foundation for building RapidlyBuilt tools."
   spec.license     = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the "allowed_push_host"
   # to allow pushing to a single host or delete this section to allow pushing to any host.
-  spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
+  # spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "TODO: Put your gem's public repo URL here."
-  spec.metadata["changelog_uri"] = "TODO: Put your gem's CHANGELOG.md URL here."
+  spec.metadata["source_code_uri"] = "https://github.com/rapidlybuilt/rapidly_built"
+  # spec.metadata["changelog_uri"] = "https://github.com/rapidlybuilt/rapidly_built/blob/main/CHANGELOG.md"
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
     Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
@@ -26,6 +26,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rails", ">= 8.1.1"
   spec.add_dependency "zeitwerk", "~> 2.7"
   spec.add_dependency "rapid_ui", "= 0.1.0"
-
-  spec.add_development_dependency "simplecov", "~> 0.22"
 end
