@@ -43,7 +43,7 @@ module MountToolTest
       @toolkit.add_tool(@tool)
 
       redraw_routes do
-        mount RapidlyBuilt.config.define_engine => "/tools", as: "tools", defaults: { app_id: "tools" }
+        mount RapidlyBuilt.config.default_engine => "/tools", as: "tools", defaults: { app_id: "tools" }
       end
 
       # Reset the request counter
@@ -77,7 +77,7 @@ module MountToolTest
 
     setup do
       @toolkit = RapidlyBuilt.config.build_toolkit(:tools)
-      @tool = TestTool.new
+      @tool = TestTool.new(id: "my_id")
       @toolkit.add_tool(@tool)
 
       redraw_routes do
@@ -89,9 +89,7 @@ module MountToolTest
     end
 
     test "tool is included in toolkit" do
-      tool_ids = @toolkit.tools.map(&:id)
-
-      assert_includes tool_ids, "mount_tool_test"
+      assert_includes @toolkit.tools, @tool
     end
 
     test "toolkit is marked as mounted after drawing the routes" do
