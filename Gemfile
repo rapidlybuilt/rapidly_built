@@ -12,7 +12,12 @@ gem "rubocop-rails-omakase", require: false
 # gem "debug", ">= 1.0.0"
 
 # TODO: declare this as a dependency in the gemspec
-gem "rapid_ui", path: "../rapid_ui"
+# bundle config https://rubygems.pkg.github.com/dcunning USERNAME:TOKEN
+source "https://rubygems.pkg.github.com/dcunning" do
+  gem "rapid_ui"
+end
+# gem "rapid_ui", path: "../rapid_ui"
+
 
 # Testing gems
 group :test do
