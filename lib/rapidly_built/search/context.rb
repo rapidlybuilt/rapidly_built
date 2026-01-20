@@ -2,23 +2,23 @@ module RapidlyBuilt
   module Search
     # Context object that flows through the search middleware stack
     #
-    # Contains the search query string, results, and the application instance.
+    # Contains the search query string, results, and the toolkit instance.
     # Each search middleware receives a Context and can add, modify, or filter results.
     #
     # @example
-    #   context = RapidlyBuilt::Search::Context.new(query_string: "ruby gems", application: app)
+    #   context = RapidlyBuilt::Search::Context.new(query_string: "ruby gems", toolkit: toolkit)
     #   context.add_result(title: "Result 1", url: "/result1")
     #   context.results # => [<Result>, ...]
     #   context.results.size # => 1
     #   context.results.select! { |r| r.title == "Result 1" }
     class Context
-      attr_reader :query_string, :results, :application
+      attr_reader :query_string, :results, :toolkit
 
       # @param query_string [String] The search query string
-      # @param application [RapidlyBuilt::Application] The application instance
-      def initialize(query_string:, application:)
+      # @param toolkit [RapidlyBuilt::Toolkit] The toolkit instance
+      def initialize(query_string:, toolkit:)
         @query_string = query_string.to_s
-        @application = application
+        @toolkit = toolkit
         @results = []
       end
 

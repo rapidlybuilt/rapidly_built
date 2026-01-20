@@ -2,8 +2,8 @@ module RapidlyBuilt
   module Rails
     # Controller helper for integrating RapidlyBuilt with Rails controllers
     #
-    # Provides access to the mounted RapidlyBuilt::Application instance and
-    # sets up layout initialization via the application's layout middleware.
+    # Provides access to the mounted RapidlyBuilt::Toolkit instance and
+    # sets up the context via the toolkit's setup middleware.
     #
     # @example
     #   class ApplicationController < ActionController::Base
@@ -13,52 +13,37 @@ module RapidlyBuilt
       extend ActiveSupport::Concern
 
       included do
-        before_action :initialize_rapid_layout
+        extend RapidUI::UsesLayout
+        uses_application_layout
+
+        before_action :setup_rapidly_built
       end
 
       private
 
-      # Get the RapidlyBuilt::Application instance for the current request
-      #
-      # @return [Application, nil] The application instance, or nil if not found
-      def application
-        @application ||= find_application || raise(ApplicationNotFoundError, "Application not found")
+      attr_reader :rapidly_built
+
+      # Initialize the layout using the toolkit's layout middleware
+      def setup_rapidly_built
+        app_id = params[:app_id]
+
+        context = Toolkit::Context.new(
+          toolkit: RapidlyBuilt.config.find_toolkit!(app_id),
+          ui:, # from RapidUI::UsesLayout
+          controller: self,
+        )
+
+        # API for modifying the
+        context.toolkit.context_middleware.call(context)
+        finalize_rapidly_built(context)
+
+        @rapidly_built = context
       end
 
-      # Get the current layout instance
+      # Allow controllers the last chance to modify the context
       #
-      # @return [Object, nil] The layout instance
-      def rapid_layout
-        # #layout conflicts with ActionController so using rapid_layout
-        @rapid_layout
-      end
-
-      # Find the RapidlyBuilt::Application instance using the app parameter
-      #
-      # @return [Application, nil] The application instance, or nil if not found
-      def find_application(name = params[:app_id])
-        RapidlyBuilt.config.application(name)
-      end
-
-      # Initialize the layout using the application's layout middleware
-      def initialize_rapid_layout
-        return unless application
-
-        context = Layout::Context.new(layout:, application:)
-
-        # Run the layout middleware stack
-        context = application.layout_middleware.call(context)
-        context = finalize_layout(context)
-
-        @rapid_layout = context.layout
-      end
-
-      # Allow controllers the last chance to modify the layout
-      #
-      # @param context [Layout::Context] The layout context
-      # @return [Layout::Context] The modified layout context
-      def finalize_layout(context)
-        context
+      # @param context [Context] The context
+      def finalize_rapidly_built(context)
       end
     end
   end

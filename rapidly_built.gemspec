@@ -22,9 +22,10 @@ Gem::Specification.new do |spec|
     Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
   end
 
-  # TODO: plugin applications without Rails (just mountable Rack applications)
+  # TODO: don't require Rails (just mountable Rack applications)
   spec.add_dependency "rails", ">= 8.1.1"
   spec.add_dependency "zeitwerk", "~> 2.7"
+  spec.add_dependency "rapid_ui", "= 0.1.0"
 
   spec.add_development_dependency "simplecov", "~> 0.22"
 end

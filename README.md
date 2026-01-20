@@ -1,6 +1,6 @@
 # RapidlyBuilt
 
-RapidlyBuilt is a Ruby gem that enables you to develop modular plugins within a unified user interface. Many individual plugins come together into a single, cohesive web portal.
+RapidlyBuilt is a Ruby gem that enables you to develop modular tools within a unified user interface. Many individual tools come together into a single, cohesive web portal.
 
 ## Installation
 
@@ -17,21 +17,21 @@ gem "rapidly_built"
 * TODO: add dashboard widgets
 * TODO: append notifications
 
-### Register your plugin
+### Register your tool
 
 ```ruby
 # lib/my_gem.rb
-RapidlyBuilt.register! MyGem::Plugin
+RapidlyBuilt.register_tool! MyGem::Tool
 ```
 
-### Define your plugin
+### Define your tool
 
 ```ruby
-# lib/my_gem/plugin.rb
-class MyGem::Plugin < RapidlyBuilt::Base
-  def connect(app)
-    app.search_middleware.use MyGem::Plugin::Search
-    app.layout_middleware.use MyGem::Plugin::LayoutBuilder
+# lib/my_gem/tool.rb
+class MyGem::Tool < RapidlyBuilt::Tool
+  def connect(toolkit)
+    toolkit.search_middleware.use MyGem::Tool::Search
+    toolkit.context_middleware.use MyGem::Tool::LayoutBuilder
   end
 
   def mount(routes)
@@ -47,7 +47,7 @@ end
 ```ruby
 # config/routes.rb
 Rails.application.routes.draw do
-  mount RapidlyBuilt::Engine, at: "/admin"
+  mount RapidlyBuilt::Rails::Engine, at: "/admin"
 ```
 
 ```ruby
@@ -57,15 +57,15 @@ class ApplicationController < ActionController::Base
 end
 ```
 
-## Multiple Applications
+## Multiple Toolkits
 
-The default application uses registered plugins. In order to use only a subset of the registered plugins or split the plugins into separate mountable engines for different sets of users, you can explicitly define the applications.
+The default toolkit uses registered tools. In order to use only a subset of the registered tools or split the tools into separate mountable engines for different sets of users, you can explicitly define the toolkits.
 
 ```ruby
 # config/initializers/rapidlybuilt.rb
 RapidlyBuilt.config do |config|
-  config.build_application :admin, plugins: [MyAdmin::Plugin, AnotherAdmin::Plugin]
-  config.build_application :root, plugins: [MyRoot::Plugin, AnotherRoot::Plugin]
+  config.build_toolkit :admin, tools: [MyAdmin::Tool, AnotherAdmin::Tool]
+  config.build_toolkit :root, tools: [MyRoot::Tool, AnotherRoot::Tool]
 end
 ```
 
@@ -73,11 +73,12 @@ end
 # config/routes.rb
 Rails.application.routes.draw do
   # explicitly mount it The Rails Way
-  mount RapidlyBuilt::Engine, at: "/admin", as: "admin", defaults: { rapidly_built_app: "admin" }
-  mount RapidlyBuilt::Engine, at: "/root", as: "root", defaults: { rapidly_built_app: "root" }
+  mount RapidlyBuilt::Rails::Engine, at: "/admin", as: "admin", defaults: { app_id: "admin" }
+  mount RapidlyBuilt::Rails::Engine, at: "/root", as: "root", defaults: { app_id: "root" }
 
   # or use the helper for convenience
-  mount_rails_plugin_app :root
+  mount_rapidly_built_toolkit :admin
+  mount_rapidly_built_toolkit :root
 end
 ```
 
@@ -86,4 +87,3 @@ Contribution directions go here.
 
 ## License
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-

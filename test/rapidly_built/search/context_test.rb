@@ -4,13 +4,13 @@ module RapidlyBuilt
   module Search
     class ContextTest < ActiveSupport::TestCase
       setup do
-        @application = Object.new
-        @context = Context.new(query_string: "test", application: @application)
+        @toolkit = Object.new
+        @context = Context.new(query_string: "test", toolkit: @toolkit)
       end
 
-      test "initializes with query_string and application" do
+      test "initializes with query_string and toolkit" do
         assert_equal "test", @context.query_string
-        assert_equal @application, @context.application
+        assert_equal @toolkit, @context.toolkit
       end
 
       test "initializes with empty results array" do

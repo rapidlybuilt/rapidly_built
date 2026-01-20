@@ -1,8 +1,11 @@
 require "zeitwerk"
+require "rapid_ui"
 
 module RapidlyBuilt
   class Error < StandardError; end
-  class ApplicationNotFoundError < Error; end
+  class ToolkitNotFoundError < Error; end
+  class ToolNotFoundError < Error; end
+  class ToolNotUniqueError < Error; end
 
   def self.loader
     @loader ||= Zeitwerk::Loader.for_gem.tap do |loader|
@@ -31,14 +34,14 @@ module RapidlyBuilt
     @config = Config.new
   end
 
-  # Register a plugin class with the default application
+  # Register a tool class with the default toolkit
   #
-  # @param plugin_class [Class] The plugin class to register
-  # @return [Application] The default application instance
+  # @param tool_class [Class] The tool class to register
+  # @return [Toolkit] The default toolkit instance
   # @example
-  #   RapidlyBuilt.register! MyGem::Plugin
-  def self.register!(plugin_class)
-    config.default_application.add_plugin(plugin_class)
+  #   RapidlyBuilt.register_tool! MyGem::Tool
+  def self.register_tool!(tool_class)
+    config.default_toolkit.add_tool(tool_class)
   end
 end
 
