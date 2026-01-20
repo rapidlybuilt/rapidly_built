@@ -3,7 +3,6 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [ main ]
 
 jobs:
   lint:
@@ -37,12 +36,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # services:
-    #  redis:
-    #    image: valkey/valkey:8
-    #    ports:
-    #      - 6379:6379
-    #    options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -56,8 +49,6 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
-          # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-          # REDIS_URL: redis://localhost:6379/0
         run: bin/test
 
       - name: Keep screenshots from failed system tests
@@ -67,3 +58,20 @@ jobs:
           name: screenshots
           path: ${{ github.workspace }}/tmp/screenshots
           if-no-files-found: ignore
+
+  release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs:
+      - lint
+      - test
+    permissions:
+      packages: write
+      contents: read
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and publish gem
+      uses: jstastny/publish-gem-to-github@master
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        owner: dcunning
