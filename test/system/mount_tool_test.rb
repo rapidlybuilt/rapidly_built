@@ -51,9 +51,7 @@ module MountToolTest
     end
 
     test "tool is included in toolkit" do
-      tool_ids = @toolkit.tools.map(&:id)
-
-      assert_includes tool_ids, "mount_tool_test"
+      assert_includes @toolkit.tools, @tool
     end
 
     test "toolkit is marked as mounted after drawing the routes" do
