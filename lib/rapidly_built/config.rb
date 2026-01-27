@@ -7,8 +7,21 @@ module RapidlyBuilt
   #     config.build_toolkit :root, tools: [MyRoot::Tool, AnotherRoot::Tool]
   #   end
   class Config
+    # Whether to reload middleware classes on each call.
+    #
+    # When true, middleware instances are created fresh on each call,
+    # allowing code changes to take effect without restarting.
+    # When false, instances are cached for performance.
+    #
+    # Defaults to false. The Rails railtie sets this to true in development.
+    #
+    # @return [Boolean]
+    attr_accessor :reload_classes
+    alias_method :reload_classes?, :reload_classes
+
     def initialize
       @toolkits = {}
+      @reload_classes = false
     end
 
     # Build a toolkit with the given name and tools
