@@ -28,8 +28,10 @@ module RapidlyBuilt
         assert_equal [], @toolkit.tools
       end
 
-      test "initializes with search_middleware" do
-        assert_instance_of Middleware, @toolkit.search_middleware
+      test "initializes with search container" do
+        assert_instance_of Search::Container, @toolkit.search
+        assert_instance_of Search::Static, @toolkit.search.static
+        assert_instance_of Middleware, @toolkit.search.dynamic
       end
 
       test "initializes with context_middleware" do
