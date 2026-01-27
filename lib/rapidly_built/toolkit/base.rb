@@ -4,24 +4,25 @@ module RapidlyBuilt
     #
     # Each toolkit manages:
     # - A list of tools
-    # - A search middleware stack
-    # - A setup middleware stack
+    # - A search container (static items + dynamic middleware)
+    # - A context middleware stack
     #
     # @example
     #   toolkit = RapidlyBuilt::Toolkit.new
     #   toolkit.add_tool(MyGem::Tool.new)
-    #   toolkit.search_middleware.use(MySearchMiddleware)
+    #   toolkit.search.static.add(title: "Home", url: "/", description: "Homepage")
+    #   toolkit.search.dynamic.use(MySearchMiddleware)
     #   toolkit.context_middleware.use(MySetupMiddleware)
     class Base
       attr_reader :id
       attr_reader :tools
       attr_reader :context_middleware
-      attr_reader :search_middleware
+      attr_reader :search
 
       def initialize(id)
         @id = id
         @tools = []
-        @search_middleware = Middleware.new
+        @search = Search::Container.new
         @context_middleware = Middleware.new
         @mounted = false
       end

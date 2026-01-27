@@ -30,7 +30,12 @@ RapidlyBuilt.register_tool! MyGem::Tool
 # lib/my_gem/tool.rb
 class MyGem::Tool < RapidlyBuilt::Tool
   def connect(toolkit)
-    toolkit.search_middleware.use MyGem::Tool::Search
+    # Register static search items (searched client-side, instant results)
+    toolkit.search.static.add(title: "Dashboard", url: "/dashboard", description: "View your dashboard")
+    
+    # Register dynamic search middleware (runs server-side)
+    toolkit.search.dynamic.use MyGem::Tool::Search
+    
     toolkit.context_middleware.use MyGem::Tool::LayoutBuilder
   end
 

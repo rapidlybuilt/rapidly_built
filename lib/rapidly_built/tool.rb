@@ -4,9 +4,14 @@ module RapidlyBuilt
   #
   # Example:
   #   class MyGem::Tool < RapidlyBuilt::Tool
-  #     def connect(app)
-  #       app.search_middleware.use MyGem::Tool::Search
-  #       app.context_middleware.use MyGem::Tool::LayoutBuilder
+  #     def connect(toolkit)
+  #       # Register static search items (searched client-side, instant results)
+  #       toolkit.search.static.add(title: "Home", url: "/", description: "Homepage")
+  #
+  #       # Register dynamic search middleware (runs server-side)
+  #       toolkit.search.dynamic.use MyGem::Tool::Search
+  #
+  #       toolkit.context_middleware.use MyGem::Tool::LayoutBuilder
   #     end
   #
   #     def mount(routes)
