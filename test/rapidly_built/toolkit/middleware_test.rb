@@ -449,6 +449,17 @@ module RapidlyBuilt
         index = @stack.send(:find_index, "TestMiddlewareB")
         assert_equal 1, index
       end
+
+      test "generates a new instance every time when reload_classes? is true" do
+        RapidlyBuilt.config.with reload_classes: true do
+          @stack.use TestMiddlewareA
+          @stack.use TestMiddlewareB
+
+          instance1 = @stack.entries.first.instance
+          instance2 = @stack.entries.first.instance
+          assert_not_same instance1, instance2
+        end
+      end
     end
   end
 end

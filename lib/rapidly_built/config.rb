@@ -50,13 +50,6 @@ module RapidlyBuilt
       @toolkits[:default] ||= build_toolkit(:default)
     end
 
-    # Define an engine for the default toolkit
-    #
-    # @return [Class] The engine class
-    def default_engine
-      default_toolkit.engine
-    end
-
     # Get a toolkit by name
     #
     # @param name [Symbol, String, nil] The toolkit name, or nil for default
@@ -74,14 +67,6 @@ module RapidlyBuilt
     # @return [Hash] Hash of toolkit name to Toolkit instance
     def toolkits
       @toolkits.dup
-    end
-
-    # Get the engine class for a specific toolkit
-    #
-    # @param name [Symbol, String, nil] The toolkit name, or nil for default
-    # @return [Class] The engine class for the toolkit
-    def engine(name = nil)
-      find_toolkit!(name).engine
     end
   end
 end

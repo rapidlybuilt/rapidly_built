@@ -36,18 +36,6 @@ module RapidlyBuilt
       assert_instance_of TestTool, toolkit.tools.last
     end
 
-    test "#build_toolkit creates an engine for the toolkit" do
-      toolkit = @config.build_toolkit(:admin, tools: [])
-      engine = @config.engine(:admin)
-
-      assert_instance_of Class, engine
-      assert engine < Rails::Engine
-      # Test that toolkit method exists and returns the correct toolkit
-      # by using instance_eval to call it on a new instance
-      engine_instance = engine.allocate
-      assert_equal toolkit, engine_instance.toolkit
-    end
-
     test "#build_toolkit returns the created toolkit" do
       toolkit = @config.build_toolkit(:admin, tools: [])
 
@@ -66,12 +54,6 @@ module RapidlyBuilt
       toolkit2 = @config.default_toolkit
 
       assert_equal toolkit1, toolkit2
-    end
-
-    test "#default_engine returns the engine for the default toolkit" do
-      engine = @config.default_engine
-      assert_equal @config.default_toolkit.engine, @config.engine
-      assert_instance_of Class, engine
     end
 
     test "#find_toolkit! returns the default toolkit when name is nil" do
@@ -130,32 +112,6 @@ module RapidlyBuilt
       toolkits2 = @config.toolkits
 
       assert_not_same toolkits1, toolkits2
-    end
-
-    test "#engine returns the engine for a specific toolkit" do
-      toolkit = @config.build_toolkit(:admin, tools: [])
-      engine = @config.engine(:admin)
-
-      assert_instance_of Class, engine
-      assert engine < Rails::Engine
-      engine_instance = engine.allocate
-      assert_equal toolkit, engine_instance.toolkit
-    end
-
-    test "#engine converts name to symbol" do
-      toolkit = @config.build_toolkit(:admin, tools: [])
-      engine = @config.engine("admin")
-
-      assert_instance_of Class, engine
-      assert engine < Rails::Engine
-      engine_instance = engine.allocate
-      assert_equal toolkit, engine_instance.toolkit
-    end
-
-    test "#engine raises ToolkitNotFoundError for non-existent toolkit" do
-      assert_raises ToolkitNotFoundError, "Toolkit :nonexistent for engine not found" do
-        @config.engine(:nonexistent)
-      end
     end
   end
 end

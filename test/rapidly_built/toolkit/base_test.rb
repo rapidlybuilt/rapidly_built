@@ -70,14 +70,6 @@ module RapidlyBuilt
         assert_equal [ tool1, tool2 ], @toolkit.tools
       end
 
-      test "raises error if adding tool to mounted toolkit" do
-        @toolkit.mark_as_mounted!
-        tool = TestTool.new
-        assert_raises RuntimeError, "Cannot add tools to a toolkit that has already been mounted in a Rails engine" do
-          @toolkit.add_tool(tool)
-        end
-      end
-
       test "raises an error when adding a tool with the same class and id" do
         tool1 = TestTool.new
         tool2 = TestTool.new(id: tool1.id)

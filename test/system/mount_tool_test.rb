@@ -28,9 +28,6 @@ module MountToolTest
   end
 
   class TestTool < RapidlyBuilt::Tool
-    def mount(routes)
-      routes.mount TestToolEngine => "test_support"
-    end
   end
 
   class DefaultToolkitTest < ActionDispatch::SystemTestCase
@@ -43,7 +40,7 @@ module MountToolTest
       @toolkit.add_tool(@tool)
 
       redraw_routes do
-        mount RapidlyBuilt.config.default_engine => "/tools", as: "tools", defaults: { app_id: "tools" }
+        mount TestToolEngine => "/tools/test_support", as: "tools", defaults: { app_id: "tools" }
       end
 
       # Reset the request counter
@@ -52,10 +49,6 @@ module MountToolTest
 
     test "tool is included in toolkit" do
       assert_includes @toolkit.tools, @tool
-    end
-
-    test "toolkit is marked as mounted after drawing the routes" do
-      assert @toolkit.mounted?, "Toolkit should be marked as mounted after routes are drawn"
     end
 
     test "tool handles multiple requests" do
@@ -79,7 +72,7 @@ module MountToolTest
       @toolkit.add_tool(@tool)
 
       redraw_routes do
-        mount RapidlyBuilt.config.find_toolkit!(:tools).engine => "/tools", as: "tools", defaults: { app_id: "tools" }
+        mount TestToolEngine => "/tools/test_support", as: "tools", defaults: { app_id: "tools" }
       end
 
       # Reset the request counter
@@ -88,10 +81,6 @@ module MountToolTest
 
     test "tool is included in toolkit" do
       assert_includes @toolkit.tools, @tool
-    end
-
-    test "toolkit is marked as mounted after drawing the routes" do
-      assert @toolkit.mounted?, "Toolkit should be marked as mounted after routes are drawn"
     end
 
     test "tool handles multiple requests" do
