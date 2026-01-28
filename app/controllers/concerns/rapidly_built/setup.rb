@@ -26,7 +26,7 @@ module RapidlyBuilt
     def setup_rapidly_built
       app_id = params[:app_id]
 
-      context = Request::Context.new(
+      context = Toolkit::Request::Context.new(
         toolkit: RapidlyBuilt.config.find_toolkit!(app_id),
         ui:, # from RapidUI::UsesLayout
         controller: self,
