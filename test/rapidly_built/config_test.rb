@@ -3,11 +3,8 @@ require "test_helper"
 module RapidlyBuilt
   class ConfigTest < ActiveSupport::TestCase
     # Test tool class scoped to this test class
-    class TestTool < Tool
+    class TestTool < Tool::Base
       def connect(app)
-      end
-
-      def mount(routes)
       end
     end
 

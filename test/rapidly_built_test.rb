@@ -1,11 +1,8 @@
 require "test_helper"
 
 class RapidlyBuiltTest < ActiveSupport::TestCase
-  class TestTool < RapidlyBuilt::Tool
+  class TestTool < RapidlyBuilt::Tool::Base
     def connect(app)
-    end
-
-    def mount(routes)
     end
   end
 

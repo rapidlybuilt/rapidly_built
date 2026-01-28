@@ -27,7 +27,7 @@ module MountToolTest
     end
   end
 
-  class TestTool < RapidlyBuilt::Tool
+  class TestTool < RapidlyBuilt::Tool::Base
   end
 
   class DefaultToolkitTest < ActionDispatch::SystemTestCase

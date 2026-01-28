@@ -30,7 +30,7 @@ module RapidlyBuilt
       #
       # @param tool [Base] The tool instance to add
       # @return [self]
-      # @raise [RuntimeError] if the toolkit has already been mounted
+      # @raise [ToolNotUniqueError] if the tool already exists
       def add_tool(tool)
         if find_tool(tool.class, id: tool.id)
           raise ToolNotUniqueError, "Tool #{tool.class.name} with id #{tool.id.inspect} already exists"

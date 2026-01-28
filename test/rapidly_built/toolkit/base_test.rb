@@ -4,7 +4,7 @@ module RapidlyBuilt
   module Toolkit
     class BaseTest < ActiveSupport::TestCase
       # Test tool class scoped to this test class
-      class TestTool < Tool
+      class TestTool < Tool::Base
         attr_reader :connected
 
         def initialize(**options)
@@ -14,9 +14,6 @@ module RapidlyBuilt
 
         def connect(app)
           @connected = true
-        end
-
-        def mount(routes)
         end
       end
 
