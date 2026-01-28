@@ -158,7 +158,12 @@ module RapidlyBuilt
         end
 
         @toolkits.find!(:admin)
-        assert_equal [1, 2], order
+        assert_equal [ 1, 2 ], order
+      end
+
+      test "#new and #find! chained together" do
+        toolkit = @toolkits.new(:admin).find!(:admin)
+        assert_instance_of Toolkit::Base, toolkit
       end
 
       test "#reload! clears cached instances" do

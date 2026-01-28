@@ -48,7 +48,7 @@ module RapidlyBuilt
         config = Toolkit.new(id, class_name: class_name)
         config.blocks << block if block
         @configs[id] = config
-        nil
+        self
       end
 
       # Configure an existing toolkit configuration
@@ -59,7 +59,7 @@ module RapidlyBuilt
         config = @configs[id]
         raise ToolkitNotFoundError, "Toolkit #{id.inspect} not found" unless config
         config.blocks << block if block
-        nil
+        self
       end
 
       # Find or build a toolkit instance by name

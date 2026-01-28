@@ -35,7 +35,7 @@ module MountToolTest
     driven_by :cuprite_desktop
 
     setup do
-      @toolkit = RapidlyBuilt.config.default_toolkit
+      @toolkit = RapidlyBuilt.config.toolkits.new(:tools).find!(:tools)
       @tool = TestTool.new
       @toolkit.add_tool(@tool)
 
@@ -67,7 +67,7 @@ module MountToolTest
     driven_by :cuprite_desktop
 
     setup do
-      @toolkit = RapidlyBuilt.config.build_toolkit(:tools)
+      @toolkit = RapidlyBuilt.config.toolkits.new(:tools).find!(:tools)
       @tool = TestTool.new(id: "my_id")
       @toolkit.add_tool(@tool)
 

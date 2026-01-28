@@ -339,7 +339,6 @@ module RapidlyBuilt
         index = @stack.send(:find_index, TestMiddlewareB)
         assert_nil index
       end
-
     end
   end
 end
