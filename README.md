@@ -32,10 +32,10 @@ class MyGem::Tool < RapidlyBuilt::Tool
   def connect(toolkit)
     # Register static search items (searched client-side, instant results)
     toolkit.search.static.add(title: "Dashboard", url: "/dashboard", description: "View your dashboard")
-    
+
     # Register dynamic search middleware (runs server-side)
     toolkit.search.dynamic.use MyGem::Tool::Search
-    
+
     toolkit.context_middleware.use MyGem::Tool::LayoutBuilder
   end
 
@@ -58,7 +58,7 @@ Rails.application.routes.draw do
 ```ruby
 # app/controllers/application_controller.rb
 class ApplicationController < ActionController::Base
-  include RapidlyBuilt::Rails::ControllerHelper
+  include RapidlyBuilt::Setup
 end
 ```
 

@@ -9,7 +9,7 @@ module RapidlyBuilt
 
   def self.loader
     @loader ||= Zeitwerk::Loader.for_gem.tap do |loader|
-      loader.ignore("#{__dir__}/rapidly_built/railtie.rb")
+      loader.ignore("#{__dir__}/rapidly_built/engine.rb")
       loader.setup
     end
   end
@@ -45,4 +45,4 @@ module RapidlyBuilt
   end
 end
 
-require "rapidly_built/rails/railtie" if defined?(Rails::Railtie)
+require "rapidly_built/engine" if defined?(Rails::Engine)

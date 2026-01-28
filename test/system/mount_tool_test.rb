@@ -2,7 +2,7 @@ require "test_helper"
 
 module MountToolTest
   # Define an engine + controller + tool for testing
-  class TestToolEngine < ::Rails::Engine
+  class TestToolEngine < Rails::Engine
     isolate_namespace MountToolTest
 
     # Draw routes immediately (routes do block only appends, doesn't draw)
