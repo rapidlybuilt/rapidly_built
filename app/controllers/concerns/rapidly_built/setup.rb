@@ -24,10 +24,10 @@ module RapidlyBuilt
 
     # Initialize the layout using the toolkit's layout middleware
     def setup_rapidly_built
-      app_id = params[:app_id]
+      app_id = params[:app_id] || :default
 
       context = Toolkit::Request::Context.new(
-        toolkit: RapidlyBuilt.config.find_toolkit!(app_id),
+        toolkit: RapidlyBuilt.config.toolkits.find!(app_id),
         ui:, # from RapidUI::UsesLayout
         controller: self,
       )

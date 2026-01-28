@@ -18,7 +18,7 @@ module RapidlyBuilt
       end
 
       setup do
-        @toolkit = Toolkit::Base.new(:default)
+        @toolkit = Toolkit::Base.new
       end
 
       test "initializes with empty tools array" do
@@ -50,6 +50,13 @@ module RapidlyBuilt
         assert tool.connected
       end
 
+      test "#add_tool accepts a tool subclass" do
+        @toolkit.add_tool(TestTool)
+
+        assert_equal 1, @toolkit.tools.size
+        assert_equal TestTool, @toolkit.tools.first.class
+      end
+
       test "#add_tool returns self" do
         tool = TestTool.new
         result = @toolkit.add_tool(tool)
@@ -71,7 +78,7 @@ module RapidlyBuilt
         tool1 = TestTool.new
         tool2 = TestTool.new(id: tool1.id)
         @toolkit.add_tool(tool1)
-        assert_raises ToolNotUniqueError, "Tool TestTool with id #{tool1.id} not found" do
+        assert_raises ToolAlreadyDefinedError, "Tool TestTool with id #{tool1.id} not found" do
           @toolkit.add_tool(tool2)
         end
       end

@@ -5,7 +5,7 @@ module RapidlyBuilt
     module Request
       class ContextTest < ActiveSupport::TestCase
         setup do
-          @toolkit = Toolkit::Base.new(:default)
+          @toolkit = Toolkit::Base.new
 
           # Create stub objects
           @cookies = Object.new

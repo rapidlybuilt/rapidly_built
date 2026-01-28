@@ -35,8 +35,10 @@ module RapidlyBuilt
     end
 
     setup do
-      @toolkit = RapidlyBuilt.config.default_toolkit
-      @admin_toolkit = RapidlyBuilt.config.build_toolkit(:admin, tools: [])
+      RapidlyBuilt.config.toolkits.new(:default)
+      RapidlyBuilt.config.toolkits.new(:admin)
+      @toolkit = RapidlyBuilt.config.toolkits.find!(:default)
+      @admin_toolkit = RapidlyBuilt.config.toolkits.find!(:admin)
       @controller = TestController.new
       @routes = ActionDispatch::Routing::RouteSet.new
       @routes.draw do

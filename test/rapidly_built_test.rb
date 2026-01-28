@@ -9,10 +9,4 @@ class RapidlyBuiltTest < ActiveSupport::TestCase
   test "it has a version number" do
     assert RapidlyBuilt::VERSION
   end
-
-  test "register_tool! adds tool to default toolkit" do
-    tool = TestTool.new
-    RapidlyBuilt.register_tool!(tool)
-    assert_equal [ tool ], RapidlyBuilt.config.default_toolkit.tools
-  end
 end

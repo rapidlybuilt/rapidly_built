@@ -14,13 +14,11 @@ module RapidlyBuilt
     #   toolkit.search.dynamic.use(MySearchMiddleware)
     #   toolkit.request.middleware.use(MySetupMiddleware)
     class Base
-      attr_reader :id
       attr_reader :tools
       attr_reader :request
       attr_reader :search
 
-      def initialize(id)
-        @id = id
+      def initialize
         @tools = []
         @search = Search::Container.new
         @request = Request::Container.new
@@ -30,10 +28,12 @@ module RapidlyBuilt
       #
       # @param tool [Base] The tool instance to add
       # @return [self]
-      # @raise [ToolNotUniqueError] if the tool already exists
+      # @raise [ToolAlreadyDefinedError] if the tool already exists
       def add_tool(tool)
+        tool = tool.new if tool.is_a?(Class)
+
         if find_tool(tool.class, id: tool.id)
-          raise ToolNotUniqueError, "Tool #{tool.class.name} with id #{tool.id.inspect} already exists"
+          raise ToolAlreadyDefinedError, "Tool #{tool.class.name} with id #{tool.id.inspect} already exists"
         end
 
         @tools << tool

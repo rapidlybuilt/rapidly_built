@@ -2,8 +2,8 @@ module RapidlyBuilt
   class Engine < Rails::Engine
     isolate_namespace RapidlyBuilt
 
-    initializer "rapidly_built.configure_reloading" do
-      RapidlyBuilt.config.reload_classes = Rails.env.development?
+    config.to_prepare do
+      RapidlyBuilt.config.toolkits.reload!
     end
 
     rake_tasks do

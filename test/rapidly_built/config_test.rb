@@ -8,107 +8,189 @@ module RapidlyBuilt
       end
     end
 
+    # Test toolkit class scoped to this test class
+    class TestToolkit < Toolkit::Base
+    end
+
     setup do
       @config = Config.new
     end
 
-    test "#build_toolkit creates a toolkit with the given name" do
-      toolkit = @config.build_toolkit(:admin, tools: [])
-
-      assert_instance_of Toolkit::Base, toolkit
-      assert_equal toolkit, @config.find_toolkit!(:admin)
+    test "#toolkits returns the Toolkits instance" do
+      assert_instance_of Config::Toolkits, @config.toolkits
     end
 
-    test "#build_toolkit converts name to symbol" do
-      toolkit = @config.build_toolkit("admin", tools: [])
+    class ToolkitsTest < ActiveSupport::TestCase
+      setup do
+        @toolkits = Config::Toolkits.new
+      end
 
-      assert_equal toolkit, @config.find_toolkit!(:admin)
-    end
+      test "#new creates a toolkit configuration" do
+        @toolkits.new(:admin)
+        assert_instance_of RapidlyBuilt::Toolkit::Base, @toolkits.find!(:admin)
+      end
 
-    test "#build_toolkit adds tools to the toolkit by class or instance" do
-      toolkit = @config.build_toolkit(:admin, tools: [ TestTool, TestTool.new(id: "tool2") ])
+      test "#new converts string id to symbol" do
+        @toolkits.new("admin")
+        assert_instance_of RapidlyBuilt::Toolkit::Base, @toolkits.find!(:admin)
+      end
 
-      assert_equal 2, toolkit.tools.size
-      assert_instance_of TestTool, toolkit.tools.first
-      assert_instance_of TestTool, toolkit.tools.last
-    end
+      test "#new raises if toolkit already defined" do
+        @toolkits.new(:admin)
+        assert_raises(RapidlyBuilt::ToolkitAlreadyDefinedError) do
+          @toolkits.new(:admin)
+        end
+      end
 
-    test "#build_toolkit returns the created toolkit" do
-      toolkit = @config.build_toolkit(:admin, tools: [])
+      test "#new accepts class_name option for custom toolkit class" do
+        @toolkits.new(:admin, class_name: "RapidlyBuilt::ConfigTest::TestToolkit")
+        toolkit = @toolkits.find!(:admin)
+        assert_instance_of TestToolkit, toolkit
+      end
 
-      assert_instance_of Toolkit::Base, toolkit
-    end
+      test "#new stores block for lazy execution" do
+        block_called = false
+        @toolkits.new(:admin) do |toolkit|
+          block_called = true
+          assert_instance_of Toolkit::Base, toolkit
+        end
 
-    test "#default_toolkit creates a new toolkit if it doesn't exist" do
-      toolkit = @config.default_toolkit
+        assert_not block_called, "Block should not be called until find!"
+        @toolkits.find!(:admin)
+        assert block_called, "Block should be called on find!"
+      end
 
-      assert_instance_of Toolkit::Base, toolkit
-      assert_equal toolkit, @config.default_toolkit
-    end
+      test "#configure adds block to existing toolkit" do
+        @toolkits.new(:admin)
 
-    test "#default_toolkit returns the same toolkit on subsequent calls" do
-      toolkit1 = @config.default_toolkit
-      toolkit2 = @config.default_toolkit
+        block_called = false
+        @toolkits.configure(:admin) do |toolkit|
+          block_called = true
+        end
 
-      assert_equal toolkit1, toolkit2
-    end
+        @toolkits.find!(:admin)
+        assert block_called
+      end
 
-    test "#find_toolkit! returns the default toolkit when name is nil" do
-      default = @config.default_toolkit
-      toolkit = @config.find_toolkit!(nil)
+      test "#configure raises if toolkit not found" do
+        assert_raises(RapidlyBuilt::ToolkitNotFoundError) do
+          @toolkits.configure(:nonexistent) { }
+        end
+      end
 
-      assert_equal default, toolkit
-    end
+      test "#find! builds toolkit on first access" do
+        @toolkits.new(:admin)
+        toolkit = @toolkits.find!(:admin)
+        assert_instance_of Toolkit::Base, toolkit
+      end
 
-    test "#find_toolkit! returns the default toolkit when name is :default" do
-      default = @config.default_toolkit
-      toolkit = @config.find_toolkit!(:default)
+      test "#find! returns cached instance on subsequent calls" do
+        @toolkits.new(:admin)
+        toolkit1 = @toolkits.find!(:admin)
+        toolkit2 = @toolkits.find!(:admin)
+        assert_same toolkit1, toolkit2
+      end
 
-      assert_equal default, toolkit
-    end
+      test "#find! raises if toolkit not found" do
+        assert_raises(RapidlyBuilt::ToolkitNotFoundError) do
+          @toolkits.find!(:nonexistent)
+        end
+      end
 
-    test "#find_toolkit! returns the default toolkit when no name is provided" do
-      default = @config.default_toolkit
-      toolkit = @config.find_toolkit!(nil)
+      test "#find! block receives built toolkit and can add tools" do
+        @toolkits.new(:admin) do |toolkit|
+          toolkit.add_tool(TestTool.new)
+        end
 
-      assert_equal default, toolkit
-    end
+        toolkit = @toolkits.find!(:admin)
+        assert_equal 1, toolkit.tools.size
+        assert_instance_of TestTool, toolkit.tools.first
+      end
 
-    test "#find_toolkit! returns a toolkit by name" do
-      admin_toolkit = @config.build_toolkit(:admin, tools: [])
+      test "#find! builds tools from Class in config.tools" do
+        @toolkits.new(:admin)
+        config = @toolkits.send(:instance_variable_get, :@configs)[:admin]
+        config.tools << TestTool
 
-      assert_equal admin_toolkit, @config.find_toolkit!(:admin)
-    end
+        toolkit = @toolkits.find!(:admin)
+        assert_equal 1, toolkit.tools.size
+        assert_instance_of TestTool, toolkit.tools.first
+      end
 
-    test "#find_toolkit! converts name to symbol" do
-      admin_toolkit = @config.build_toolkit(:admin, tools: [])
+      test "#find! builds tools from String in config.tools" do
+        @toolkits.new(:admin)
+        config = @toolkits.send(:instance_variable_get, :@configs)[:admin]
+        config.tools << "RapidlyBuilt::ConfigTest::TestTool"
 
-      assert_equal admin_toolkit, @config.find_toolkit!("admin")
-    end
+        toolkit = @toolkits.find!(:admin)
+        assert_equal 1, toolkit.tools.size
+        assert_instance_of TestTool, toolkit.tools.first
+      end
 
-    test "#find_toolkit! raises ToolkitNotFoundError for non-existent toolkit" do
-      assert_raises ToolkitNotFoundError do
-        @config.find_toolkit!(:nonexistent)
+      test "#find! uses tool instance directly from config.tools" do
+        @toolkits.new(:admin)
+        config = @toolkits.send(:instance_variable_get, :@configs)[:admin]
+        tool_instance = TestTool.new
+        config.tools << tool_instance
+
+        toolkit = @toolkits.find!(:admin)
+        assert_equal 1, toolkit.tools.size
+        assert_same tool_instance, toolkit.tools.first
+      end
+
+      test "#find! raises ArgumentError for invalid tool in config.tools" do
+        @toolkits.new(:admin)
+        config = @toolkits.send(:instance_variable_get, :@configs)[:admin]
+        config.tools << 12345
+
+        assert_raises(ArgumentError) do
+          @toolkits.find!(:admin)
+        end
+      end
+
+      test "#find! runs multiple blocks in order" do
+        order = []
+        @toolkits.new(:admin) do |toolkit|
+          order << 1
+        end
+        @toolkits.configure(:admin) do |toolkit|
+          order << 2
+        end
+
+        @toolkits.find!(:admin)
+        assert_equal [1, 2], order
+      end
+
+      test "#reload! clears cached instances" do
+        @toolkits.new(:admin)
+        toolkit1 = @toolkits.find!(:admin)
+
+        @toolkits.reload!
+
+        toolkit2 = @toolkits.find!(:admin)
+        assert_not_same toolkit1, toolkit2
+      end
+
+      test "#reload! does not clear configurations" do
+        @toolkits.new(:admin)
+        @toolkits.reload!
+        assert_not_nil @toolkits.find!(:admin)
       end
     end
 
-    test "#toolkits returns a hash of all toolkits" do
-      admin_toolkit = @config.build_toolkit(:admin, tools: [])
-      root_toolkit = @config.build_toolkit(:root, tools: [])
+    class ToolkitConfigTest < ActiveSupport::TestCase
+      test "initializes with id and empty collections" do
+        config = Config::Toolkit.new(:admin)
+        assert_equal :admin, config.id
+        assert_nil config.class_name
+        assert_equal [], config.tools
+        assert_equal [], config.blocks
+      end
 
-      toolkits = @config.toolkits
-
-      assert_instance_of Hash, toolkits
-      assert_equal admin_toolkit, toolkits[:admin]
-      assert_equal root_toolkit, toolkits[:root]
-    end
-
-    test "#toolkits returns a duplicate hash" do
-      @config.build_toolkit(:admin, tools: [])
-      toolkits1 = @config.toolkits
-      toolkits2 = @config.toolkits
-
-      assert_not_same toolkits1, toolkits2
+      test "initializes with class_name option" do
+        config = Config::Toolkit.new(:admin, class_name: "MyToolkit")
+        assert_equal "MyToolkit", config.class_name
+      end
     end
   end
 end
