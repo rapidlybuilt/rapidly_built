@@ -4,7 +4,7 @@ module RapidlyBuilt
   module Toolkit
     class BaseTest < ActiveSupport::TestCase
       # Test tool class scoped to this test class
-      class TestTool < Tool
+      class TestTool < Tool::Base
         attr_reader :connected
 
         def initialize(**options)
@@ -15,13 +15,10 @@ module RapidlyBuilt
         def connect(app)
           @connected = true
         end
-
-        def mount(routes)
-        end
       end
 
       setup do
-        @toolkit = Toolkit::Base.new(:default)
+        @toolkit = Toolkit::Base.new
       end
 
       test "initializes with empty tools array" do
@@ -34,8 +31,8 @@ module RapidlyBuilt
         assert_instance_of Middleware, @toolkit.search.dynamic
       end
 
-      test "initializes with context_middleware" do
-        assert_instance_of Middleware, @toolkit.context_middleware
+      test "initializes with request middleware" do
+        assert_instance_of Middleware, @toolkit.request.middleware
       end
 
       test "#add_tool adds tool to tools array" do
@@ -51,6 +48,13 @@ module RapidlyBuilt
         @toolkit.add_tool(tool)
 
         assert tool.connected
+      end
+
+      test "#add_tool accepts a tool subclass" do
+        @toolkit.add_tool(TestTool)
+
+        assert_equal 1, @toolkit.tools.size
+        assert_equal TestTool, @toolkit.tools.first.class
       end
 
       test "#add_tool returns self" do
@@ -70,19 +74,11 @@ module RapidlyBuilt
         assert_equal [ tool1, tool2 ], @toolkit.tools
       end
 
-      test "raises error if adding tool to mounted toolkit" do
-        @toolkit.mark_as_mounted!
-        tool = TestTool.new
-        assert_raises RuntimeError, "Cannot add tools to a toolkit that has already been mounted in a Rails engine" do
-          @toolkit.add_tool(tool)
-        end
-      end
-
       test "raises an error when adding a tool with the same class and id" do
         tool1 = TestTool.new
         tool2 = TestTool.new(id: tool1.id)
         @toolkit.add_tool(tool1)
-        assert_raises ToolNotUniqueError, "Tool TestTool with id #{tool1.id} not found" do
+        assert_raises ToolAlreadyDefinedError, "Tool TestTool with id #{tool1.id} not found" do
           @toolkit.add_tool(tool2)
         end
       end

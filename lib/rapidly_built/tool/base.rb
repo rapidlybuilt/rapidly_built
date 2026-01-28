@@ -1,0 +1,53 @@
+module RapidlyBuilt
+  module Tool
+    # This is the base class for all tools within the RapidlyBuilt system.
+    # To create a tool, subclass RapidlyBuilt::Tool::Base and implement the required interface.
+    #
+    # Example:
+    #   class MyGem::Tool < RapidlyBuilt::Tool::Base
+    #     def connect(toolkit)
+    #       # Register static search items (searched client-side, instant results)
+    #       toolkit.search.static.add(title: "Home", url: "/", description: "Homepage")
+    #
+    #       # Register dynamic search middleware (runs server-side)
+    #       toolkit.search.dynamic.use MyGem::Tool::Search
+    #
+    #       toolkit.request.middleware.use MyGem::Tool::LayoutBuilder
+    #     end
+    #   end
+    #
+    # Tools inheriting from this class can register their own search, layout, and UI extensions.
+    # They integrate seamlessly into the unified RapidlyBuilt web portal.
+    # See the README for more usage examples and integration patterns.
+    class Base
+      attr_reader :id
+      attr_reader :path
+
+      # @option id [String] the ID of the tool. Defaults to nil.
+      # @option path [String] the path of the tool. Defaults to the module name of the tool class.
+      def initialize(id: nil, path: default_path)
+        @id = id
+        @path = path
+      end
+
+      # Called when the tool is connected to an application.
+      # Subclasses should implement this method to register middleware and services.
+      #
+      # @param app [RapidlyBuilt::Toolkit] The toolkit instance
+      def connect(app)
+      end
+
+      private
+
+      # @return [String] the default ID of the tool
+      def default_path
+        class_name = self.class.name
+        module_name = ActiveSupport::Inflector.deconstantize(class_name)
+        parent_name = module_name.split("::").last
+
+        path = ActiveSupport::Inflector.underscore(parent_name)
+        ActiveSupport::Inflector.dasherize(path)
+      end
+    end
+  end
+end

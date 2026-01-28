@@ -28,19 +28,15 @@ RapidlyBuilt.register_tool! MyGem::Tool
 
 ```ruby
 # lib/my_gem/tool.rb
-class MyGem::Tool < RapidlyBuilt::Tool
+class MyGem::Tool < RapidlyBuilt::Tool::Base
   def connect(toolkit)
     # Register static search items (searched client-side, instant results)
     toolkit.search.static.add(title: "Dashboard", url: "/dashboard", description: "View your dashboard")
-    
+
     # Register dynamic search middleware (runs server-side)
     toolkit.search.dynamic.use MyGem::Tool::Search
-    
-    toolkit.context_middleware.use MyGem::Tool::LayoutBuilder
-  end
 
-  def mount(routes)
-    routes.mount MyGem::Engine => root_path
+    toolkit.request.middleware.use MyGem::Tool::LayoutBuilder
   end
 end
 ```
@@ -52,38 +48,16 @@ end
 ```ruby
 # config/routes.rb
 Rails.application.routes.draw do
-  mount RapidlyBuilt::Rails::Engine, at: "/admin"
+  namespace :admin, defaults: { app_id: "admin" } do
+    mount YourAdminTool::Engine => "your_tool"
+  end
 ```
 
 ```ruby
 # app/controllers/application_controller.rb
 class ApplicationController < ActionController::Base
-  include RapidlyBuilt::Rails::ControllerHelper
-end
-```
-
-## Multiple Toolkits
-
-The default toolkit uses registered tools. In order to use only a subset of the registered tools or split the tools into separate mountable engines for different sets of users, you can explicitly define the toolkits.
-
-```ruby
-# config/initializers/rapidlybuilt.rb
-RapidlyBuilt.config do |config|
-  config.build_toolkit :admin, tools: [MyAdmin::Tool, AnotherAdmin::Tool]
-  config.build_toolkit :root, tools: [MyRoot::Tool, AnotherRoot::Tool]
-end
-```
-
-```ruby
-# config/routes.rb
-Rails.application.routes.draw do
-  # explicitly mount it The Rails Way
-  mount RapidlyBuilt::Rails::Engine, at: "/admin", as: "admin", defaults: { app_id: "admin" }
-  mount RapidlyBuilt::Rails::Engine, at: "/root", as: "root", defaults: { app_id: "root" }
-
-  # or use the helper for convenience
-  mount_rapidly_built_toolkit :admin
-  mount_rapidly_built_toolkit :root
+  # uses params[:app_id] to setup the current toolkit
+  include RapidlyBuilt::Setup
 end
 ```
 

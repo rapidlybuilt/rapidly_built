@@ -3,11 +3,8 @@ require "test_helper"
 module RapidlyBuilt
   class ToolTest < ActiveSupport::TestCase
     # Test tool class scoped to this test class
-    class MyTool < Tool
+    class MyTool < Tool::Base
       def connect(app)
-      end
-
-      def mount(routes)
       end
     end
 
@@ -32,11 +29,10 @@ module RapidlyBuilt
       assert_equal "test", tool.path
     end
 
-    test "base tool exposes connect and mount methods with safe defaults" do
-      tool = RapidlyBuilt::Tool.new
+    test "base tool exposes connect method with safe defaults" do
+      tool = RapidlyBuilt::Tool::Base.new
 
       assert_nothing_raised { tool.connect(nil) }
-      assert_nothing_raised { tool.mount(nil) }
     end
   end
 end

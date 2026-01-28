@@ -56,6 +56,14 @@ module RapidlyBuilt
         assert_equal 2, @stack.size
       end
 
+      test "#use accepts an instance" do
+        middleware = TestMiddlewareA.new
+        @stack.use middleware
+        assert_equal 1, @stack.size
+        result = @stack.call([])
+        assert_equal [ :a ], result
+      end
+
       test "#use passes arguments to middleware constructor" do
         middleware_class = Class.new do
           attr_reader :arg1, :arg2
@@ -330,124 +338,6 @@ module RapidlyBuilt
 
         index = @stack.send(:find_index, TestMiddlewareB)
         assert_nil index
-      end
-
-      # String class name (lazy loading) tests
-
-      test "#use accepts string class name for lazy loading" do
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareA"
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareB"
-
-        assert_equal 2, @stack.size
-        result = @stack.call([])
-        assert_equal [ :a, :b ], result
-      end
-
-      test "#use with string class name resolves class lazily" do
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareA"
-
-        entry = @stack.entries.first
-        # klass_or_name should still be a string
-        assert_equal "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareA", entry.klass_or_name
-        # klass should resolve to the actual class
-        assert_equal TestMiddlewareA, entry.klass
-      end
-
-      test "#use with string passes arguments to middleware constructor" do
-        middleware_class = Class.new do
-          attr_reader :arg1, :arg2
-
-          def initialize(arg1, arg2)
-            @arg1 = arg1
-            @arg2 = arg2
-          end
-
-          def call(args)
-            args
-          end
-        end
-
-        # Define the class with a constant name so we can reference it as a string
-        self.class.const_set(:TestMiddlewareWithArgs, middleware_class) unless self.class.const_defined?(:TestMiddlewareWithArgs)
-
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareWithArgs", :arg1, :arg2
-        entry = @stack.entries.first
-        middleware = entry.instance
-
-        assert_equal :arg1, middleware.arg1
-        assert_equal :arg2, middleware.arg2
-      end
-
-      test "mixed class and string registration works" do
-        @stack.use TestMiddlewareA
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareB"
-        @stack.use TestMiddlewareC
-
-        result = @stack.call([])
-        assert_equal [ :a, :b, :c ], result
-      end
-
-      test "#insert_before works with string-registered middleware" do
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareA"
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareC"
-        @stack.insert_before "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareC", TestMiddlewareB
-
-        result = @stack.call([])
-        assert_equal [ :a, :b, :c ], result
-      end
-
-      test "#insert_after works with string-registered middleware" do
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareA"
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareC"
-        @stack.insert_after "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareA", TestMiddlewareB
-
-        result = @stack.call([])
-        assert_equal [ :a, :b, :c ], result
-      end
-
-      test "#swap works with string-registered middleware" do
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareA"
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareB"
-        @stack.swap "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareB", TestMiddlewareC
-
-        result = @stack.call([])
-        assert_equal [ :a, :c ], result
-      end
-
-      test "#delete works with string-registered middleware" do
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareA"
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareB"
-        @stack.delete "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareA"
-
-        assert_equal 1, @stack.size
-        result = @stack.call([])
-        assert_equal [ :b ], result
-      end
-
-      test "#each works with string-registered middleware" do
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareA"
-        @stack.use TestMiddlewareB
-
-        classes = []
-        @stack.each { |entry| classes << entry.klass }
-
-        assert_equal [ TestMiddlewareA, TestMiddlewareB ], classes
-      end
-
-      test "find_index works with class when middleware registered as string" do
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareA"
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareB"
-
-        index = @stack.send(:find_index, TestMiddlewareB)
-        assert_equal 1, index
-      end
-
-      test "find_index works with short name when middleware registered as string" do
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareA"
-        @stack.use "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareB"
-
-        index = @stack.send(:find_index, "TestMiddlewareB")
-        assert_equal 1, index
       end
     end
   end

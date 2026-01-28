@@ -26,6 +26,14 @@ module RapidlyBuilt
       def has_description?
         !description.nil? && !description.empty?
       end
+
+      def to_hash
+        {
+          title: title,
+          url: url,
+          description: description,
+        }
+      end
     end
   end
 end

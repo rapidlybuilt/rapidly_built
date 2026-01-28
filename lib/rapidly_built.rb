@@ -3,13 +3,16 @@ require "rapid_ui"
 
 module RapidlyBuilt
   class Error < StandardError; end
+
   class ToolkitNotFoundError < Error; end
+  class ToolkitAlreadyDefinedError < Error; end
+
   class ToolNotFoundError < Error; end
-  class ToolNotUniqueError < Error; end
+  class ToolAlreadyDefinedError < Error; end
 
   def self.loader
     @loader ||= Zeitwerk::Loader.for_gem.tap do |loader|
-      loader.ignore("#{__dir__}/rapidly_built/railtie.rb")
+      loader.ignore("#{__dir__}/rapidly_built/engine.rb")
       loader.setup
     end
   end
@@ -33,16 +36,6 @@ module RapidlyBuilt
   def self.reset!
     @config = Config.new
   end
-
-  # Register a tool class with the default toolkit
-  #
-  # @param tool_class [Class] The tool class to register
-  # @return [Toolkit] The default toolkit instance
-  # @example
-  #   RapidlyBuilt.register_tool! MyGem::Tool
-  def self.register_tool!(tool_class)
-    config.default_toolkit.add_tool(tool_class)
-  end
 end
 
-require "rapidly_built/rails/railtie" if defined?(Rails::Railtie)
+require "rapidly_built/engine" if defined?(Rails::Engine)

@@ -12,44 +12,21 @@ module RapidlyBuilt
     #   result = stack.call(initial_args)
     class Middleware
       # Internal class to represent a middleware entry in the stack
-      #
-      # Supports both Class and String (class name) for lazy loading.
-      # When a String is provided, the class is resolved via constantize
-      # at call time, enabling hot reloading in development.
       class Entry
-        attr_reader :klass_or_name, :args, :block
+        attr_reader :klass, :args, :block
 
-        def initialize(klass_or_name, *args, &block)
-          @klass_or_name = klass_or_name
+        def initialize(klass, *args, &block)
+          @klass = klass
           @args = args
           @block = block
           @cached_instance = nil
         end
 
-        # Returns the resolved class
-        #
-        # @return [Class] The middleware class
-        def klass
-          if @klass_or_name.is_a?(String)
-            @klass_or_name.constantize
-          else
-            @klass_or_name
-          end
-        end
-
-        # Returns a middleware instance
-        #
-        # When RapidlyBuilt.config.reload_classes? is true, returns a fresh
-        # instance on each call to pick up code changes.
-        # Otherwise, caches the instance for performance.
+        # Returns a cached middleware instance
         #
         # @return [Object] The middleware instance
         def instance
-          if RapidlyBuilt.config.reload_classes?
-            klass.new(*args, &block)
-          else
-            @cached_instance ||= klass.new(*args, &block)
-          end
+          @cached_instance ||= klass.is_a?(Class) ? klass.new(*args, &block) : klass
         end
       end
 
@@ -240,7 +217,7 @@ module RapidlyBuilt
       # @param target [Class, String] The target to match against
       # @return [Boolean]
       def matches?(entry, target)
-        entry_name = entry.klass_or_name.is_a?(String) ? entry.klass_or_name : entry.klass_or_name.name
+        entry_name = entry.klass.name
 
         if target.is_a?(Class)
           entry_name == target.name

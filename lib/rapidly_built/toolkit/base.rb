@@ -12,47 +12,28 @@ module RapidlyBuilt
     #   toolkit.add_tool(MyGem::Tool.new)
     #   toolkit.search.static.add(title: "Home", url: "/", description: "Homepage")
     #   toolkit.search.dynamic.use(MySearchMiddleware)
-    #   toolkit.context_middleware.use(MySetupMiddleware)
+    #   toolkit.request.middleware.use(MySetupMiddleware)
     class Base
-      attr_reader :id
       attr_reader :tools
-      attr_reader :context_middleware
+      attr_reader :request
       attr_reader :search
 
-      def initialize(id)
-        @id = id
+      def initialize
         @tools = []
         @search = Search::Container.new
-        @context_middleware = Middleware.new
-        @mounted = false
-      end
-
-      # Check if this toolkit's tools have been mounted in a Rails engine
-      #
-      # @return [Boolean] true if the toolkit has been mounted
-      def mounted?
-        @mounted
-      end
-
-      # Mark this toolkit as mounted
-      # Called automatically when the engine's routes block runs
-      #
-      # @return [self]
-      def mark_as_mounted!
-        @mounted = true
-        self
+        @request = Request::Container.new
       end
 
       # Add a tool to the toolkit and call its connect method
       #
       # @param tool [Base] The tool instance to add
       # @return [self]
-      # @raise [RuntimeError] if the toolkit has already been mounted
+      # @raise [ToolAlreadyDefinedError] if the tool already exists
       def add_tool(tool)
+        tool = tool.new if tool.is_a?(Class)
+
         if find_tool(tool.class, id: tool.id)
-          raise ToolNotUniqueError, "Tool #{tool.class.name} with id #{tool.id.inspect} already exists"
-        elsif mounted?
-          raise RuntimeError, "Cannot add tools to a toolkit that has already been mounted in a Rails engine"
+          raise ToolAlreadyDefinedError, "Tool #{tool.class.name} with id #{tool.id.inspect} already exists"
         end
 
         @tools << tool
@@ -77,10 +58,6 @@ module RapidlyBuilt
       # @return [Tool, nil] The found tool, or nil if not found
       def find_tool(klass, id: nil)
         @tools.find { |tool| tool.is_a?(klass) && tool.id == id }
-      end
-
-      def engine
-        @engine ||= Rails::Engine.build_engine_for(self)
       end
     end
   end

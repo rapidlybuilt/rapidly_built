@@ -2,7 +2,7 @@ require "test_helper"
 
 module MountToolTest
   # Define an engine + controller + tool for testing
-  class TestToolEngine < ::Rails::Engine
+  class TestToolEngine < Rails::Engine
     isolate_namespace MountToolTest
 
     # Draw routes immediately (routes do block only appends, doesn't draw)
@@ -27,10 +27,7 @@ module MountToolTest
     end
   end
 
-  class TestTool < RapidlyBuilt::Tool
-    def mount(routes)
-      routes.mount TestToolEngine => "test_support"
-    end
+  class TestTool < RapidlyBuilt::Tool::Base
   end
 
   class DefaultToolkitTest < ActionDispatch::SystemTestCase
@@ -38,12 +35,12 @@ module MountToolTest
     driven_by :cuprite_desktop
 
     setup do
-      @toolkit = RapidlyBuilt.config.default_toolkit
+      @toolkit = RapidlyBuilt.config.toolkits.new(:tools).find!(:tools)
       @tool = TestTool.new
       @toolkit.add_tool(@tool)
 
       redraw_routes do
-        mount RapidlyBuilt.config.default_engine => "/tools", as: "tools", defaults: { app_id: "tools" }
+        mount TestToolEngine => "/tools/test_support", as: "tools", defaults: { app_id: "tools" }
       end
 
       # Reset the request counter
@@ -52,10 +49,6 @@ module MountToolTest
 
     test "tool is included in toolkit" do
       assert_includes @toolkit.tools, @tool
-    end
-
-    test "toolkit is marked as mounted after drawing the routes" do
-      assert @toolkit.mounted?, "Toolkit should be marked as mounted after routes are drawn"
     end
 
     test "tool handles multiple requests" do
@@ -74,12 +67,12 @@ module MountToolTest
     driven_by :cuprite_desktop
 
     setup do
-      @toolkit = RapidlyBuilt.config.build_toolkit(:tools)
+      @toolkit = RapidlyBuilt.config.toolkits.new(:tools).find!(:tools)
       @tool = TestTool.new(id: "my_id")
       @toolkit.add_tool(@tool)
 
       redraw_routes do
-        mount RapidlyBuilt.config.find_toolkit!(:tools).engine => "/tools", as: "tools", defaults: { app_id: "tools" }
+        mount TestToolEngine => "/tools/test_support", as: "tools", defaults: { app_id: "tools" }
       end
 
       # Reset the request counter
@@ -88,10 +81,6 @@ module MountToolTest
 
     test "tool is included in toolkit" do
       assert_includes @toolkit.tools, @tool
-    end
-
-    test "toolkit is marked as mounted after drawing the routes" do
-      assert @toolkit.mounted?, "Toolkit should be marked as mounted after routes are drawn"
     end
 
     test "tool handles multiple requests" do
