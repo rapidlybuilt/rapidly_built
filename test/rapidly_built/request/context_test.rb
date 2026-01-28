@@ -1,7 +1,7 @@
 require "test_helper"
 
 module RapidlyBuilt
-  module Toolkit
+  module Request
     class ContextTest < ActiveSupport::TestCase
       setup do
         @toolkit = Toolkit::Base.new(:default)

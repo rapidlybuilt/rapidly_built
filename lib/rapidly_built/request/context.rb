@@ -1,9 +1,9 @@
 module RapidlyBuilt
-  module Toolkit
+  module Request
     class Context
       attr_reader :toolkit
       attr_reader :ui
-      attr_reader :controller
+      attr_reader :controller # TODO: shouldn't be Rails specific
 
       with_options to: :ui do
         delegate :layout

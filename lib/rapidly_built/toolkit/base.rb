@@ -12,18 +12,18 @@ module RapidlyBuilt
     #   toolkit.add_tool(MyGem::Tool.new)
     #   toolkit.search.static.add(title: "Home", url: "/", description: "Homepage")
     #   toolkit.search.dynamic.use(MySearchMiddleware)
-    #   toolkit.context_middleware.use(MySetupMiddleware)
+    #   toolkit.request.middleware.use(MySetupMiddleware)
     class Base
       attr_reader :id
       attr_reader :tools
-      attr_reader :context_middleware
+      attr_reader :request
       attr_reader :search
 
       def initialize(id)
         @id = id
         @tools = []
         @search = Search::Container.new
-        @context_middleware = Middleware.new
+        @request = Request::Container.new
       end
 
       # Add a tool to the toolkit and call its connect method

@@ -31,8 +31,8 @@ module RapidlyBuilt
         assert_instance_of Middleware, @toolkit.search.dynamic
       end
 
-      test "initializes with context_middleware" do
-        assert_instance_of Middleware, @toolkit.context_middleware
+      test "initializes with request middleware" do
+        assert_instance_of Middleware, @toolkit.request.middleware
       end
 
       test "#add_tool adds tool to tools array" do

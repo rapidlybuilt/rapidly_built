@@ -36,7 +36,7 @@ class MyGem::Tool < RapidlyBuilt::Tool::Base
     # Register dynamic search middleware (runs server-side)
     toolkit.search.dynamic.use MyGem::Tool::Search
 
-    toolkit.context_middleware.use MyGem::Tool::LayoutBuilder
+    toolkit.request.middleware.use MyGem::Tool::LayoutBuilder
   end
 end
 ```

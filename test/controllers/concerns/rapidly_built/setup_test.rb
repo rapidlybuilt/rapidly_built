@@ -20,7 +20,7 @@ module RapidlyBuilt
     end
 
     # Test layout middleware
-    class TestSetupMiddleware
+    class TestRequestMiddleware
       attr_reader :called_with_context
 
       def initialize(**options)
@@ -51,13 +51,13 @@ module RapidlyBuilt
       end
     end
 
-    test "running setup middleware" do
-      @toolkit.context_middleware.use(TestSetupMiddleware)
+    test "running request middleware" do
+      @toolkit.request.middleware.use(TestRequestMiddleware)
 
       get :index
 
       # Get the middleware instance from the stack
-      middleware_entry = @toolkit.context_middleware.entries.first
+      middleware_entry = @toolkit.request.middleware.entries.first
       middleware = middleware_entry.instance
 
       assert_not_nil middleware.called_with_context.ui.layout
