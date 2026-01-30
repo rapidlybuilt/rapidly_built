@@ -11,12 +11,11 @@ gem "rubocop-rails-omakase", require: false
 # Start debugger with binding.b [https://github.com/ruby/debug]
 # gem "debug", ">= 1.0.0"
 
-# bundle config https://rubygems.pkg.github.com/dcunning USERNAME:TOKEN
-source "https://rubygems.pkg.github.com/dcunning" do
+# bundle config https://rubygems.pkg.github.com/rapidlybuilt USERNAME:TOKEN
+source "https://rubygems.pkg.github.com/rapidlybuilt" do
   gem "rapid_ui"
 end
 # gem "rapid_ui", path: "../rapid_ui"
-
 
 # Testing gems
 group :test do
