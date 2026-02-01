@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   end
 
   spec.bindir = "bin"
-  spec.executables = ["rapid"]
+  spec.executables = [ "rapid" ]
 
   # TODO: don't require Rails (just mountable Rack applications)
   spec.add_dependency "rails", ">= 8.1.1"
