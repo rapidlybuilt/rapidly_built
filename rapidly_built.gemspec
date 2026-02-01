@@ -19,11 +19,14 @@ Gem::Specification.new do |spec|
   # spec.metadata["changelog_uri"] = "https://github.com/rapidlybuilt/rapidly_built/blob/main/CHANGELOG.md"
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
-    Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
+    Dir["{app,config,db,lib,bin}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
   end
+
+  spec.bindir = "bin"
+  spec.executables = ["rapid"]
 
   # TODO: don't require Rails (just mountable Rack applications)
   spec.add_dependency "rails", ">= 8.1.1"
   spec.add_dependency "zeitwerk", "~> 2.7"
-  spec.add_dependency "rapid_ui", "= 0.1.5"
+  spec.add_dependency "rapid_ui", "= 0.1.6"
 end
