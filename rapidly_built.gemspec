@@ -28,5 +28,5 @@ Gem::Specification.new do |spec|
   # TODO: don't require Rails (just mountable Rack applications)
   spec.add_dependency "rails", ">= 8.1.1"
   spec.add_dependency "zeitwerk", "~> 2.7"
-  spec.add_dependency "rapid_ui", "= 0.2.1"
+  spec.add_dependency "rapid_ui", "= 0.2.2"
 end

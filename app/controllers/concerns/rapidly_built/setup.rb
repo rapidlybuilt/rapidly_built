@@ -3,8 +3,8 @@ require "delegate"
 module RapidlyBuilt
   # Setup for integrating RapidlyBuilt with Rails controllers
   #
-  # Provides access to the mounted RapidlyBuilt::Toolkit instance and
-  # sets up the context via the toolkit's setup middleware.
+  # Provides access to the RapidlyBuilt Console and
+  # sets up the context via the console's request middleware.
   #
   # @example
   #   class ApplicationController < ActionController::Base

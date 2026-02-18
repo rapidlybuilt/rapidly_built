@@ -13,9 +13,9 @@ gem "rubocop-rails-omakase", require: false
 
 # bundle config https://rubygems.pkg.github.com/rapidlybuilt USERNAME:TOKEN
 source "https://rubygems.pkg.github.com/rapidlybuilt" do
-  # gem "rapid_ui"
+  gem "rapid_ui"
 end
-gem "rapid_ui", path: "../rapid_ui"
+# gem "rapid_ui", path: "../rapid_ui"
 
 # Testing gems
 group :test do

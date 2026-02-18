@@ -7,6 +7,9 @@ class ExternalEngineTest < ActionDispatch::SystemTestCase
   test "external engine routes are available under console namespace" do
     visit "/admin/inventory"
     assert_text "Inventory Dashboard (external engine)"
+
+    visit "/admin/inventory/items"
+    assert_text "Inventory Items Index"
   end
 
   test "added result to search index" do

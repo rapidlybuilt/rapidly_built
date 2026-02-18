@@ -99,7 +99,6 @@ end
 Define your integration:
 
 ```ruby
-# app/modules/customer_relations/integration.rb
 module CustomerRelations
   class CustomerRelations::Integration < RapidlyBuilt::Integration::Base
     def call
@@ -124,7 +123,6 @@ end
 Define what you just integrated:
 
 ```ruby
-# app/modules/customer_relations/contacts_search.rb
 module CustomerRelations
   class CustomerRelations::ContactsSearch < RapidlyBuilt::Search::Middleware::Entry
     def call
@@ -142,7 +140,6 @@ end
 ```
 
 ```ruby
-# app/modules/custom_relations/request_middleware.rb
 module CustomerRelations
   class RequestMiddleware < RapidlyBuilt::Request::Middleware::Base
     def call
