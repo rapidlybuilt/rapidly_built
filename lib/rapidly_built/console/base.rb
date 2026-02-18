@@ -1,6 +1,9 @@
 module RapidlyBuilt
   module Console
     class Base
+      class_attribute :search_index_path, instance_accessor: false
+      class_attribute :search_path, instance_accessor: false
+
       attr_accessor :id
 
       def initialize(id:)
@@ -25,11 +28,11 @@ module RapidlyBuilt
       end
 
       def search_index_path(**kwargs)
-        helpers.send("#{id}_search_index_path", **kwargs)
+        helpers.send(self.class.search_index_path || "#{id}_search_index_path", **kwargs)
       end
 
       def search_path(**kwargs)
-        helpers.send("#{id}_search_path", **kwargs)
+        helpers.send(self.class.search_path || "#{id}_search_path", **kwargs)
       end
 
       private

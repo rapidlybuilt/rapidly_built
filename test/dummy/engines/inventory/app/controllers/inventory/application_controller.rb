@@ -2,6 +2,6 @@
 
 module Inventory
   class ApplicationController < ActionController::Base
-    include RapidlyBuilt::Setup
+    include RapidlyBuilt::UsesConsole
   end
 end

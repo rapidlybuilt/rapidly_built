@@ -1,12 +1,12 @@
 require "test_helper"
 
 module RapidlyBuilt
-  class SetupTest < ActionController::TestCase
+  class UsesConsoleTest < ActionController::TestCase
     include ConsoleSupport
 
     # Test controller that includes the helper
     class TestController < ActionController::Base
-      include RapidlyBuilt::Setup
+      include RapidlyBuilt::UsesConsole
 
       def index
         render plain: "OK"
@@ -39,7 +39,7 @@ module RapidlyBuilt
       @controller = TestController.new
       @routes = ActionDispatch::Routing::RouteSet.new
       @routes.draw do
-        get "index", to: "rapidly_built/setup_test/test#index"
+        get "index", to: "rapidly_built/uses_console_test/test#index"
       end
       @controller.instance_variable_set(:@_routes, @routes)
     end
@@ -63,15 +63,15 @@ module RapidlyBuilt
 
       get :index
 
-      context = @controller.send(:rapidly_built)
-      middleware_entry = context.console.request.middleware.entries.first
+      console = @controller.send(:current_console)
+      middleware_entry = console.request.middleware.entries.first
       middleware = middleware_entry.instance
 
       assert_not_nil middleware.called_with_context.ui.layout
-      assert_equal context.console, middleware.called_with_context.console
+      assert_equal console, middleware.called_with_context.console
     end
 
-    test "sets rapidly_built with console" do
+    test "sets current_console with console" do
       stub_test_console do |console|
         @console = console
         console.request.middleware.use(TestRequestMiddleware)
@@ -79,8 +79,8 @@ module RapidlyBuilt
 
       get :index
 
-      context = @controller.send(:rapidly_built)
-      assert_equal @console, context.console
+      console = @controller.send(:current_console)
+      assert_equal @console, console
     end
   end
 end

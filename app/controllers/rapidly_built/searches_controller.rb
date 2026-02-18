@@ -1,10 +1,10 @@
 module RapidlyBuilt
   class SearchesController < ApplicationController
-    include RapidlyBuilt::Setup
+    include RapidlyBuilt::UsesConsole
 
     def index
       respond_to do |format|
-        format.json { render json: rapidly_built.console.search.index.as_json }
+        format.json { render json: current_console.search.index.as_json }
       end
     end
 
@@ -13,10 +13,10 @@ module RapidlyBuilt
 
       context = RapidlyBuilt::Search::Context.new(
         query_string: params[query_param],
-        console: rapidly_built.console,
+        console: current_console,
       )
 
-      rapidly_built.console.search.middleware.call(context) if context.query_string.present?
+      current_console.search.middleware.call(context) if context.query_string.present?
 
       respond_to do |format|
         format.html { render build_search_page(context) }
@@ -29,8 +29,8 @@ module RapidlyBuilt
     def build_search_page(context)
       page = ui.build(RapidUI::Search::Page)
 
-      page.static_path = rapidly_built.console.search_index_path(format: :json)
-      page.dynamic_path = rapidly_built.console.search_path(format: :json)
+      page.static_path = current_console.search_index_path(format: :json)
+      page.dynamic_path = current_console.search_path(format: :json)
       page.query = context.query_string
 
       context.results.each do |result|

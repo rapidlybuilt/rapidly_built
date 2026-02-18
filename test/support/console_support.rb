@@ -13,13 +13,13 @@ module ConsoleSupport
   end
 
   def stub_console(console_id, klass)
-    Spy.on(RapidlyBuilt::Setup, :find_console_class).and_return do |id|
+    Spy.on(RapidlyBuilt::UsesConsole, :find_console_class).and_return do |id|
       id.to_s == console_id.to_s ? klass : raise("Unexpected console ID: #{id}")
     end
   end
 
   def unstub_console
-    Spy.off(RapidlyBuilt::Setup, :find_console_class)
+    Spy.off(RapidlyBuilt::UsesConsole, :find_console_class)
   end
 
   def stub_test_console(console_id = :application, &test_config)

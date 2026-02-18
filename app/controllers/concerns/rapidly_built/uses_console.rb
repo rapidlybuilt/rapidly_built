@@ -8,28 +8,28 @@ module RapidlyBuilt
   #
   # @example
   #   class ApplicationController < ActionController::Base
-  #     include RapidlyBuilt::Setup
+  #     include RapidlyBuilt::UsesConsole
   #   end
-  module Setup
+  module UsesConsole
     extend ActiveSupport::Concern
 
     included do
       extend RapidUI::UsesLayout
       uses_application_layout
 
-      before_action :setup_rapidly_built
+      before_action :set_current_console
     end
 
     private
 
-    attr_reader :rapidly_built
+    attr_reader :current_console
 
     # Initialize the layout using the toolkit's layout middleware
-    def setup_rapidly_built
+    def set_current_console
       console_id = params[:console_id] || :application
 
       # OPTIMIZE: caching
-      console_class = Setup.find_console_class(console_id)
+      console_class = UsesConsole.find_console_class(console_id)
       console = console_class.new(id: console_id)
 
       context = Request::Context.new(
@@ -39,7 +39,7 @@ module RapidlyBuilt
       )
 
       console.request.middleware.call(context)
-      @rapidly_built = context
+      @current_console = console
     end
 
     class << self

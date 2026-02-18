@@ -1,5 +1,5 @@
 module Admin
   class BaseController < ApplicationController
-    include RapidlyBuilt::Setup
+    include RapidlyBuilt::UsesConsole
   end
 end
