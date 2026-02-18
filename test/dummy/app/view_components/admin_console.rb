@@ -5,7 +5,7 @@ class AdminConsole < RapidlyBuilt::Console::Base
     request.middleware.use RequestMiddleware
 
     integrate CustomerRelations
-    integrate Inventory, engine: Inventory::Engine
+    integrate Inventory
   end
 
   private

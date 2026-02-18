@@ -34,7 +34,7 @@ module RapidlyBuilt
 
       private
 
-      def integrate(my_module, *args, engine: nil, **kwargs)
+      def integrate(my_module, *args, engine: detect_engine(my_module), **kwargs)
         modules << [ my_module, args, kwargs ]
 
         @current_state.engine = engine
@@ -46,6 +46,11 @@ module RapidlyBuilt
         integration
       ensure
         @current_state.engine = nil
+      end
+
+      def detect_engine(my_module)
+        return nil unless my_module.respond_to?(:railtie_namespace)
+        my_module.railtie_namespace
       end
 
       class State
