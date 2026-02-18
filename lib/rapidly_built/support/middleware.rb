@@ -42,10 +42,10 @@ module RapidlyBuilt
       #   stack.use MiddlewareB
       #   result = stack.call
       class Stack
-        attr_reader :console
+        attr_reader :current_state
 
-        def initialize(console: nil)
-          @console = console
+        def initialize(current_state: nil)
+          @current_state = current_state
           @entries = []
         end
 
@@ -219,7 +219,7 @@ module RapidlyBuilt
         private
 
         def current_engine
-          console&.send(:current_engine)
+          current_state&.engine
         end
 
         # Find the index of a middleware in the stack
@@ -250,8 +250,8 @@ module RapidlyBuilt
       # Middleware stack that assumes the args are set on the entry instance
       # instead of being passed into #call.
       class ContextStack < Stack
-        def initialize(console: nil, method_name: :context=)
-          super(console:)
+        def initialize(current_state: nil, method_name: :context=)
+          super(current_state:)
           @method_name = method_name
         end
 

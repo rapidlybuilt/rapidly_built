@@ -9,10 +9,10 @@ module RapidlyBuilt
     #   toolkit.search.index.add_result(title: "Button", url: "/components/button")
     #   toolkit.search.middleware.use(MySearchMiddleware)
     class Container
-      attr_reader :console
+      attr_reader :current_state
 
-      def initialize(console: nil)
-        @console = console
+      def initialize(current_state: nil)
+        @current_state = current_state
       end
 
       # Access the static search index
@@ -26,7 +26,7 @@ module RapidlyBuilt
       #
       # @return [Support::Middleware] The middleware stack for dynamic search
       def middleware
-        @middleware ||= Support::Middleware::ContextStack.new(console:)
+        @middleware ||= Support::Middleware::ContextStack.new(current_state:)
       end
     end
   end

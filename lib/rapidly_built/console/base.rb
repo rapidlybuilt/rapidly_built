@@ -5,6 +5,7 @@ module RapidlyBuilt
 
       def initialize(id:)
         @id = id
+        @current_state = State.new
       end
 
       def modules
@@ -12,11 +13,11 @@ module RapidlyBuilt
       end
 
       def request
-        @request ||= Request::Container.new(console: self)
+        @request ||= Request::Container.new(current_state: @current_state)
       end
 
       def search
-        @search ||= Search::Container.new(console: self)
+        @search ||= Search::Container.new(current_state: @current_state)
       end
 
       def helpers
@@ -33,14 +34,10 @@ module RapidlyBuilt
 
       private
 
-      # HACK: track the engine for the current integration
-      # so we can pass it down into the middleware (for url helpers)
-      attr_accessor :current_engine
-
       def integrate(my_module, *args, engine: nil, **kwargs)
         modules << [ my_module, args, kwargs ]
 
-        self.current_engine = engine
+        @current_state.engine = engine
 
         integration_class = "#{my_module}/integration".camelize.constantize
         integration = integration_class.new(*args, **kwargs, engine:, console: self)
@@ -48,7 +45,11 @@ module RapidlyBuilt
         integration.call
         integration
       ensure
-        self.current_engine = nil
+        @current_state.engine = nil
+      end
+
+      class State
+        attr_accessor :engine
       end
     end
   end
