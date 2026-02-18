@@ -52,7 +52,7 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
-        run: bin/test
+        run: bundle exec rake test:all
 
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v5

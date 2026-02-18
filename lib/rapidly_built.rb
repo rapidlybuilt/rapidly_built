@@ -4,30 +4,16 @@ require "rapid_ui"
 module RapidlyBuilt
   class Error < StandardError; end
 
-  class ToolkitNotFoundError < Error; end
-  class ToolkitAlreadyDefinedError < Error; end
-
-  class ToolNotFoundError < Error; end
-  class ToolAlreadyDefinedError < Error; end
-
   def self.loader
     @loader ||= Zeitwerk::Loader.for_gem.tap do |loader|
       loader.ignore("#{__dir__}/rapidly_built/engine.rb")
+      loader.ignore("#{__dir__}/rapidly_built/cli/*.rb")
+      loader.ignore("#{__dir__}/rapidly_built/cli.rb")
       loader.setup
     end
   end
 
   loader
-
-  # Get or configure the RapidlyBuilt configuration
-  #
-  # @yield [Config] The configuration object
-  # @return [Config] The configuration object
-  def self.config
-    @config ||= Config.new
-    yield @config if block_given?
-    @config
-  end
 
   # Reset the configuration to a clean state
   # Useful for testing to prevent state from leaking between tests

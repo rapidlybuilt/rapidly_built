@@ -7,12 +7,8 @@ module RapidlyBuilt
       RapidUI.config.icon_paths << app_icons_path if app_icons_path.exist?
     end
 
-    config.to_prepare do
-      RapidlyBuilt.config.toolkits.reload!
-    end
-
-    rake_tasks do
-      load File.expand_path("../tasks/rapidly_built_tasks.rake", __dir__)
+    initializer "rapidly_built.routes" do
+      ActionDispatch::Routing::Mapper.include Console::RoutesExt
     end
   end
 end

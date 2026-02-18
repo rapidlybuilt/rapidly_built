@@ -1,0 +1,19 @@
+class AdminConsole < RapidlyBuilt::Console::Base
+  def build
+    request.middleware.use RequestMiddleware
+
+    integrate CustomerRelations
+    integrate Inventory
+  end
+
+  private
+
+  class RequestMiddleware < RapidlyBuilt::Request::Middleware::Entry
+    def call
+      ui.layout.build_header do |header|
+        header.build_right do |right|
+        end
+      end
+    end
+  end
+end

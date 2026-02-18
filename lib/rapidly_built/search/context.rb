@@ -12,13 +12,15 @@ module RapidlyBuilt
     #   context.results.size # => 1
     #   context.results.select! { |r| r.title == "Result 1" }
     class Context
-      attr_reader :query_string, :results, :toolkit
+      attr_reader :query_string
+      attr_reader :results
+      attr_reader :console
 
       # @param query_string [String] The search query string
-      # @param toolkit [RapidlyBuilt::Toolkit] The toolkit instance
-      def initialize(query_string:, toolkit:)
+      # @param console [RapidlyBuilt::Console::Base] The console instance
+      def initialize(query_string:, console:)
         @query_string = query_string.to_s
-        @toolkit = toolkit
+        @console = console
         @results = []
       end
 
