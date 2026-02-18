@@ -9,6 +9,14 @@ module RapidlyBuilt
           delegate :ui
           delegate :controller
         end
+
+        with_options to: :ui do
+          delegate :layout
+        end
+
+        with_options to: :console do
+          delegate :helpers
+        end
       end
     end
   end

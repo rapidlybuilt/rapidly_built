@@ -1,3 +1,5 @@
+require "delegate"
+
 module RapidlyBuilt
   # Setup for integrating RapidlyBuilt with Rails controllers
   #
@@ -24,25 +26,21 @@ module RapidlyBuilt
 
     # Initialize the layout using the toolkit's layout middleware
     def setup_rapidly_built
-      app_id = params[:app_id] || :default
+      console_id = params[:console_id] || :application
 
-      context = Toolkit::Request::Context.new(
-        toolkit: RapidlyBuilt.config.toolkits.find!(app_id),
+      # OPTIMIZE: caching
+      console_class = "#{console_id}_console".camelize.constantize
+      console = console_class.new(id: console_id)
+
+      context = Request::Context.new(
+        console:,
         ui:, # from RapidUI::UsesLayout
         controller: self,
       )
 
       # API for modifying the
-      context.toolkit.request.middleware.call(context)
-      finalize_rapidly_built(context)
-
+      console.request.middleware.call(context)
       @rapidly_built = context
-    end
-
-    # Allow controllers the last chance to modify the context
-    #
-    # @param context [Context] The context
-    def finalize_rapidly_built(context)
     end
   end
 end

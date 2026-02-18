@@ -20,6 +20,10 @@ module RapidlyBuilt
           delegate :console
           delegate :add_result
         end
+
+        with_options to: :console do
+          delegate :helpers
+        end
       end
     end
   end
