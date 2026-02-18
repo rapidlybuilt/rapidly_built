@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   console :admin do
     root to: "dashboard#show"
     resources :contacts
+
+    mount Inventory::Engine, at: "/inventory"
   end
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)

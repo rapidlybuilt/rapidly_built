@@ -3,6 +3,7 @@ module RapidlyBuilt
     module Middleware
       class Entry
         attr_accessor :context
+        attr_accessor :engine
 
         with_options to: :context do
           delegate :console
@@ -14,8 +15,8 @@ module RapidlyBuilt
           delegate :layout
         end
 
-        with_options to: :console do
-          delegate :helpers
+        def helpers
+          @helpers ||= (engine || Rails.application).routes.url_helpers
         end
       end
     end

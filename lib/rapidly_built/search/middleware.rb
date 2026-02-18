@@ -13,6 +13,7 @@ module RapidlyBuilt
       #   end
       class Entry
         attr_accessor :context
+        attr_accessor :engine
 
         with_options to: :context do
           delegate :query_string
@@ -21,8 +22,8 @@ module RapidlyBuilt
           delegate :add_result
         end
 
-        with_options to: :console do
-          delegate :helpers
+        def helpers
+          @helpers ||= (engine || Rails.application).routes.url_helpers
         end
       end
     end

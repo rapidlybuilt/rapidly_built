@@ -24,7 +24,7 @@ class InternalModuleTest < ActionDispatch::SystemTestCase
     contact = Contact.new(id: 1, first_name: "John", last_name: "Doe", company_name: "Acme Inc", email: "john@example.com")
 
     # Stub the Contact.search class method
-    Spy.on(Contact, :search).and_return { |query| query == "John" ? [contact] : [] }
+    Spy.on(Contact, :search).and_return { |query| query == "John" ? [ contact ] : [] }
 
     visit admin_search_path(q: "John")
     assert_text "Results for \"John\""

@@ -18,7 +18,7 @@ class Contact
 
   class << self
     def search(query)
-      raise NotImplementedError, "Not implemented"
+      []
     end
   end
 end

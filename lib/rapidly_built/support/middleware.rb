@@ -4,11 +4,13 @@ module RapidlyBuilt
     module Middleware
       # Internal class to represent a middleware entry in the stack
       class Entry
-        attr_reader :klass, :args, :block
+        attr_reader :klass, :engine, :args, :kwargs, :block
 
-        def initialize(klass, *args, &block)
+        def initialize(klass, engine, *args, **kwargs, &block)
           @klass = klass
+          @engine = engine
           @args = args
+          @kwargs = kwargs
           @block = block
           @cached_instance = nil
         end
@@ -17,7 +19,15 @@ module RapidlyBuilt
         #
         # @return [Object] The middleware instance
         def instance
-          @cached_instance ||= klass.is_a?(Class) ? klass.new(*args, &block) : klass
+          @cached_instance ||= klass.is_a?(Class) ? build_class_instance : klass
+        end
+
+        private
+
+        def build_class_instance
+          instance = klass.new(*args, **kwargs, &block)
+          instance.engine = engine if engine
+          instance
         end
       end
 
@@ -32,7 +42,10 @@ module RapidlyBuilt
       #   stack.use MiddlewareB
       #   result = stack.call
       class Stack
-        def initialize
+        attr_reader :console
+
+        def initialize(console: nil)
+          @console = console
           @entries = []
         end
 
@@ -42,8 +55,8 @@ module RapidlyBuilt
         # @param args [Array] Arguments to pass to the middleware constructor
         # @param block [Proc] Optional block to pass to the middleware constructor
         # @return [self]
-        def use(klass, *args, &block)
-          @entries << Entry.new(klass, *args, &block)
+        def use(klass, *args, **kwargs, &block)
+          @entries << Entry.new(klass, current_engine, *args, **kwargs, &block)
           self
         end
 
@@ -55,7 +68,7 @@ module RapidlyBuilt
         # @param block [Proc] Optional block to pass to the middleware constructor
         # @return [self]
         def insert(index, klass, *args, &block)
-          @entries.insert(index, Entry.new(klass, *args, &block))
+          @entries.insert(index, Entry.new(klass, current_engine, *args, &block))
           self
         end
 
@@ -95,7 +108,7 @@ module RapidlyBuilt
         def swap(target, klass, *args, &block)
           index = find_index(target)
           raise ArgumentError, "No such middleware: #{target}" if index.nil?
-          @entries[index] = Entry.new(klass, *args, &block)
+          @entries[index] = Entry.new(klass, current_engine, *args, &block)
           self
         end
 
@@ -128,7 +141,7 @@ module RapidlyBuilt
         # @param block [Proc] Optional block to pass to the middleware constructor
         # @return [self]
         def unshift(klass, *args, &block)
-          @entries.unshift(Entry.new(klass, *args, &block))
+          @entries.unshift(Entry.new(klass, current_engine, *args, &block))
           self
         end
 
@@ -205,6 +218,10 @@ module RapidlyBuilt
 
         private
 
+        def current_engine
+          console&.send(:current_engine)
+        end
+
         # Find the index of a middleware in the stack
         #
         # @param target [Class, String] The middleware class or name to find
@@ -233,14 +250,15 @@ module RapidlyBuilt
       # Middleware stack that assumes the args are set on the entry instance
       # instead of being passed into #call.
       class ContextStack < Stack
-        def initialize(method_name: :context=)
-          super()
+        def initialize(console: nil, method_name: :context=)
+          super(console:)
           @method_name = method_name
         end
 
         def call(context)
           @entries.each do |entry|
-            generate_instance(entry, context).call
+            instance = generate_instance(entry, context)
+            instance.call
           end
 
           context

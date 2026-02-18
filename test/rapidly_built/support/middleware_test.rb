@@ -91,7 +91,8 @@ module RapidlyBuilt
         middleware_class = Class.new do
           attr_reader :block
 
-          def initialize(&block)
+          def initialize(*args, **kwargs, &block)
+            super(*args, **kwargs)
             @block = block
           end
 

@@ -29,7 +29,7 @@ module RapidlyBuilt
       console_id = params[:console_id] || :application
 
       # OPTIMIZE: caching
-      console_class = "#{console_id}_console".camelize.constantize
+      console_class = Setup.find_console_class(console_id)
       console = console_class.new(id: console_id)
 
       context = Request::Context.new(
@@ -38,9 +38,14 @@ module RapidlyBuilt
         controller: self,
       )
 
-      # API for modifying the
       console.request.middleware.call(context)
       @rapidly_built = context
+    end
+
+    class << self
+      def find_console_class(id)
+        "#{id}_console".camelize.constantize
+      end
     end
   end
 end

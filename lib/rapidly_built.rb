@@ -17,11 +17,11 @@ module RapidlyBuilt
   #
   # @yield [Config] The configuration object
   # @return [Config] The configuration object
-  def self.config
-    @config ||= Config.new
-    yield @config if block_given?
-    @config
-  end
+  # def self.config
+  #   @config ||= Config.new
+  #   yield @config if block_given?
+  #   @config
+  # end
 
   # Reset the configuration to a clean state
   # Useful for testing to prevent state from leaking between tests

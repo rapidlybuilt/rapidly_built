@@ -30,6 +30,7 @@ module RapidlyBuilt
       page = ui.build(RapidUI::Search::Page)
 
       page.static_path = rapidly_built.console.search_index_path(format: :json)
+      page.dynamic_path = rapidly_built.console.search_path(format: :json)
       page.query = context.query_string
 
       context.results.each do |result|
