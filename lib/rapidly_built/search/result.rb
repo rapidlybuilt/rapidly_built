@@ -27,6 +27,9 @@ module RapidlyBuilt
         !description.nil? && !description.empty?
       end
 
+      # Serialize the result to a hash
+      #
+      # @return [Hash] The result as a hash
       def to_hash
         {
           title: title,

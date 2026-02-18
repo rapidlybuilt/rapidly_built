@@ -1,2 +1,0 @@
-namespace :rapid do
-end

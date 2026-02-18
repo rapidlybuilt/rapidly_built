@@ -1,6 +1,66 @@
 # RapidlyBuilt
 
-RapidlyBuilt is a Ruby gem that enables you to develop modular tools within a unified user interface. Many individual tools come together into a single, cohesive web portal.
+RapidlyBuilt is an open foundation for building consoles to operate, observe, and manage your application.
+
+It provides a unified, extensible Console that brings together modules into a single, coherent interface.
+
+## The Model
+
+RapidlyBuilt is structured around three core concepts:
+
+### Console
+
+The Console is a structured container that:
+
+* Provides a shared layout
+* Integrates modules
+
+### Module
+
+A self-contained feature component.
+
+Modules may be:
+
+* Native Rails namespaces within your app
+* Rails engines
+* Open source gems
+* Commercially licensed add-ons
+
+### Integration
+
+The mechanism that connects the module to the console by exposing:
+
+* Search terms
+* Console layout customizations
+
+The Console doesn’t "know” about implementation details — it simply integrates modules
+that conform to the integration contract.
+
+
+## Why RapidlyBuilt?
+
+Modern web apps accumulate operational needs:
+
+* Error monitoring
+* Analytics
+* Background job inspection
+* Data exploration
+* CRM tooling
+* Marketing systems
+* Internal dashboards
+
+Most teams rent these as disconnected SaaS tools.
+
+RapidlyBuilt gives you a different path:
+
+* Centralized operational interface
+* Open source core
+* Optional licensed extensions
+* Self-hosted by default
+* Fully extensible
+
+You control the stack. You control the data. You control the surface area.
+
 
 ## Installation
 
@@ -10,56 +70,89 @@ Add this line to your application's Gemfile:
 gem "rapidly_built"
 ```
 
-## Usage
-
-* Modify the application layout
-* Add to search results
-* TODO: add dashboard widgets
-* TODO: append notifications
-
-### Register your tool
-
-```ruby
-# lib/my_gem.rb
-RapidlyBuilt.register_tool! MyGem::Tool
-```
-
-### Define your tool
-
-```ruby
-# lib/my_gem/tool.rb
-class MyGem::Tool < RapidlyBuilt::Tool::Base
-  def connect(toolkit)
-    # Register static search items (searched client-side, instant results)
-    toolkit.search.static.add(title: "Dashboard", url: "/dashboard", description: "View your dashboard")
-
-    # Register dynamic search middleware (runs server-side)
-    toolkit.search.dynamic.use MyGem::Tool::Search
-
-    toolkit.request.middleware.use MyGem::Tool::LayoutBuilder
-  end
-end
-```
-
-### Rails Integration
-
-* Help your controllers live within the rapid structure
+Then mount your console:
 
 ```ruby
 # config/routes.rb
-Rails.application.routes.draw do
-  namespace :admin, defaults: { app_id: "admin" } do
-    mount YourAdminTool::Engine => "your_tool"
+console :admin do
+  # internal routes defined by your application
+  # under the "Admin" namespace
+  root to: "dashboard#show"
+
+  # admin contact management
+  resources :contacts
+end
+```
+
+Define your console:
+
+```ruby
+# app/view_components/admin_console.rb
+class AdminConsole < RapidlyBuilt::Console::Base
+  def initialize
+    integrate CustomerRelations
+    integrate RapidlyBuilt::ErrorTracking
   end
+end
+```
+
+Define your integration:
+
+```ruby
+# app/modules/customer_relations/integration.rb
+module CustomerRelations
+  class CustomerRelations::Integration < RapidlyBuilt::Integration::Base
+    def call
+      # static search results never are always available,
+      # allowing almost immediate type-ahead results.
+      search.index.add_result(
+        title: "Contacts",
+        url: helpers.contacts_path,
+        description: "Manage current and potential customers"
+      )
+
+      # dynamically searches the database for contacts
+      search.middleware.use ContactsSearch
+
+      # ran before every request to this console
+      request.middleware.use RequestMiddleware
+    end
+  end
+end
+```
+
+Define what you just integrated:
+
+```ruby
+# app/modules/customer_relations/contacts_search.rb
+module CustomerRelations
+  class CustomerRelations::ContactsSearch < RapidlyBuilt::Search::Middleware::Entry
+    def call
+      # search the database and add any contact matches
+      Contact.search(query_string).find_each do |contact|
+        add_result(
+          title: contact.full_name,
+          url: helpers.admin_contact_path(contact),
+          description: "#{contact.company_name} - #{contact.email}"
+        )
+      end
+    end
+  end
+end
 ```
 
 ```ruby
-# app/controllers/application_controller.rb
-class ApplicationController < ActionController::Base
-  # uses params[:app_id] to setup the current toolkit
-  include RapidlyBuilt::Setup
+# app/modules/custom_relations/request_middleware.rb
+module CustomerRelations
+  class RequestMiddleware < RapidlyBuilt::Request::Middleware::Base
+    def call
+      # add a "Customers" link to the header
+      layout.header.right.text_link("Customers", helpers.admin_contacts_path)
+    end
+  end
 end
 ```
+
 
 ## Contributing
 Contribution directions go here.

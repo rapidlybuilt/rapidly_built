@@ -10,7 +10,7 @@ module RapidlyBuilt
     #   static.add(title: "Button", url: "/components/button", description: "Interactive button")
     #   static.items # => [<Result>, ...]
     #   static.as_json # => [{ title: "Button", url: "/components/button", description: "..." }]
-    class Static
+    class Index
       def initialize
         @items = []
       end
@@ -21,7 +21,7 @@ module RapidlyBuilt
       # @param url [String] The URL of the search result
       # @param description [String, nil] Optional description
       # @return [Result] The created result
-      def add(title:, url:, description: nil)
+      def add_result(title:, url:, description: nil)
         result = Result.new(title: title, url: url, description: description)
         @items << result
         result

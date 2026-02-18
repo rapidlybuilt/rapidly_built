@@ -7,36 +7,19 @@ module RapidlyBuilt
         @container = Container.new
       end
 
-      test "#static returns a Static instance" do
-        assert_instance_of Static, @container.static
+      test "#index returns a Index instance" do
+        assert_instance_of Index, @container.index
       end
 
-      test "#static returns the same instance" do
-        static1 = @container.static
-        static2 = @container.static
-
-        assert_same static1, static2
+      test "#middleware returns a Support::Middleware::ContextStack instance" do
+        assert_instance_of Support::Middleware::ContextStack, @container.middleware
       end
 
-      test "#dynamic returns a Middleware instance" do
-        assert_instance_of Toolkit::Middleware, @container.dynamic
-      end
+      test "index and middleware are independent" do
+        @container.index.add_result(title: "Static Item", url: "/static")
 
-      test "#dynamic returns the same instance" do
-        dynamic1 = @container.dynamic
-        dynamic2 = @container.dynamic
-
-        assert_same dynamic1, dynamic2
-      end
-
-      test "static and dynamic are independent" do
-        @container.static.add(title: "Static Item", url: "/static")
-
-        # Dynamic middleware should be empty
-        assert_equal 0, @container.dynamic.size
-
-        # Static should have the item
-        assert_equal 1, @container.static.size
+        assert_equal 0, @container.middleware.size
+        assert_equal 1, @container.index.size
       end
     end
   end

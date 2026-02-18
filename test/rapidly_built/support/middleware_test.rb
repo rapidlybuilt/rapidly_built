@@ -1,7 +1,7 @@
 require "test_helper"
 
 module RapidlyBuilt
-  module Toolkit
+  module Support
     class MiddlewareTest < ActiveSupport::TestCase
       # Test middleware classes
       class TestMiddlewareA
@@ -38,7 +38,7 @@ module RapidlyBuilt
       end
 
       setup do
-        @stack = Middleware.new
+        @stack = Middleware::Stack.new
       end
 
       test "#use adds middleware to the end of the stack" do
@@ -321,7 +321,7 @@ module RapidlyBuilt
         @stack.use TestMiddlewareA
         @stack.use TestMiddlewareB
 
-        index = @stack.send(:find_index, "RapidlyBuilt::Toolkit::MiddlewareTest::TestMiddlewareB")
+        index = @stack.send(:find_index, "RapidlyBuilt::Support::MiddlewareTest::TestMiddlewareB")
         assert_equal 1, index
       end
 
