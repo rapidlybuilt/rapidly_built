@@ -1,7 +1,5 @@
 class AdminConsole < RapidlyBuilt::Console::Base
-  def initialize(**kwargs)
-    super(**kwargs)
-
+  def build
     request.middleware.use RequestMiddleware
 
     integrate CustomerRelations

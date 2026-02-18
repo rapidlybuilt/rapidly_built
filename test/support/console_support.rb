@@ -6,8 +6,7 @@ module ConsoleSupport
       attr_accessor :test_config
     end
 
-    def initialize(**kwargs)
-      super(**kwargs)
+    def build
       self.class.test_config&.call(self)
     end
   end

@@ -22,6 +22,15 @@ module RapidlyBuilt
           delegate :add_result
         end
 
+        with_options to: :context do
+          delegate :ui
+          delegate :controller
+        end
+
+        with_options to: :controller do
+          delegate :request
+        end
+
         def helpers
           @helpers ||= (engine || Rails.application).routes.url_helpers
         end

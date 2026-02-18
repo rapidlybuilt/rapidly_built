@@ -9,6 +9,12 @@ module RapidlyBuilt
       def initialize(id:)
         @id = id
         @current_state = State.new
+
+        build
+      end
+
+      def build
+        raise NotImplementedError, "Subclasses must implement #build"
       end
 
       def modules

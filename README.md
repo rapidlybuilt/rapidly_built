@@ -89,7 +89,7 @@ Define your console:
 ```ruby
 # app/view_components/admin_console.rb
 class AdminConsole < RapidlyBuilt::Console::Base
-  def initialize
+  def build
     integrate CustomerRelations
     integrate RapidlyBuilt::ErrorTracking
   end
